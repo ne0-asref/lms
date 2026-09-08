@@ -13,6 +13,13 @@ const purifier = DOMPurify()
 // loses their place. Applies at every level, not only rich.
 purifier.addHook('afterSanitizeAttributes', (node) => {
 	if (node.tagName === 'A') {
+		// A same-page fragment link ("#listing-3") has nowhere else to go: opening
+		// it in a new tab loads a second copy of the lesson instead of scrolling
+		// this one. Leave it as an in-page jump.
+		if ((node.getAttribute('href') ?? '').startsWith('#')) {
+			node.removeAttribute('target')
+			return
+		}
 		node.setAttribute('target', '_blank')
 		node.setAttribute('rel', 'noopener noreferrer')
 	}
