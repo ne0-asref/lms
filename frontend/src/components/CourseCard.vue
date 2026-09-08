@@ -85,8 +85,7 @@
 
 			<div
 				v-if="course.image"
-				class="font-semibold leading-6"
-				:class="course.title.length > 32 ? 'text-lg' : 'text-2xl'"
+				class="font-semibold leading-6 text-lg"
 			>
 				{{ course.title }}
 			</div>
