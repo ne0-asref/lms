@@ -70,7 +70,7 @@
 						<Badge
 							v-for="tag in course.data.tags.split(', ')"
 							:key="tag"
-							theme="gray"
+							:theme="tagTheme(tag)"
 							size="lg"
 						>
 							{{ tag }}
@@ -161,6 +161,15 @@ import type {
 import CourseCardOverlay from '@/components/CourseCardOverlay.vue'
 import CourseOutline from '@/components/CourseOutline.vue'
 import SkeletonLoader from '@/components/SkeletonLoader.vue'
+
+// Tag badges were all gray, so a row of them read as one label. Pick a theme
+// from the tag text itself so a given tag has the same colour on every course.
+const TAG_THEMES = ['blue', 'green', 'orange', 'red', 'gray'] as const
+const tagTheme = (tag: string) => {
+	let h = 7
+	for (const ch of tag) h = (h * 31 + ch.charCodeAt(0)) >>> 0
+	return TAG_THEMES[h % TAG_THEMES.length]
+}
 import CourseReviews from '@/components/CourseReviews.vue'
 import CourseInstructors from '@/components/CourseInstructors.vue'
 import CourseCreatorCard from '@/components/CourseCreatorCard.vue'
