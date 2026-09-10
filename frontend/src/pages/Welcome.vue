@@ -51,7 +51,7 @@
 						class="ProseMirror prose prose-sm max-w-none"
 					/>
 					<p v-if="home.data?.preview" class="text-sm text-ink-gray-5">
-						{{ __('Drafts are shown to moderators only.') }}
+						{{ __('Unpublished paths and courses are shown to moderators only.') }}
 					</p>
 					<div v-for="section in sections" :key="section.name" class="space-y-2">
 						<h3 v-if="section.name" class="text-base font-medium text-ink-gray-8">
@@ -80,14 +80,14 @@
 										<span class="text-base font-medium text-ink-gray-9">
 											{{ program.title }}
 										</span>
-										<Badge v-if="!program.published" theme="gray">
-											{{ __('Draft') }}
-										</Badge>
 										<Badge v-if="program.free_preview" theme="green">
-											{{ __('Free preview') }}
+											{{ __('Free Preview') }}
 										</Badge>
 										<Badge v-if="program.virtual_hardware" theme="blue">
-											{{ __('Virtual hardware') }}
+											{{ __('Virtual Hardware') }}
+										</Badge>
+										<Badge v-if="program.physical_hardware" theme="gray">
+											{{ __('Physical Hardware') }}
 										</Badge>
 										<Badge v-if="program.offers_certificate" theme="orange">
 											<span class="lucide-award size-3 me-1" />
@@ -98,7 +98,7 @@
 										{{ program.description }}
 									</p>
 									<p class="text-sm text-ink-gray-5">
-										{{ courseCount(program.course_count) }}<template v-if="home.data?.preview && program.total_courses > program.course_count"> ({{ __('{0} in draft').format(program.total_courses - program.course_count) }})</template>
+										{{ courseCount(home.data?.preview ? program.total_courses : program.course_count) }}
 									</p>
 								</div>
 								<router-link

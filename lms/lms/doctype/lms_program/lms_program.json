@@ -17,6 +17,7 @@
   "image",
   "column_break_home",
   "virtual_hardware",
+  "physical_hardware",
   "offers_certificate",
   "free_preview",
   "home_order",
@@ -127,6 +128,13 @@
   },
   {
    "default": "0",
+   "fieldname": "physical_hardware",
+   "fieldtype": "Check",
+   "label": "Needs physical hardware",
+   "description": "The path is done on real boards"
+  },
+  {
+   "default": "0",
    "fieldname": "offers_certificate",
    "fieldtype": "Check",
    "label": "Certificate on completion"
@@ -160,7 +168,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-09-10 09:00:00.000000",
+ "modified": "2026-09-10 09:30:00.000000",
  "modified_by": "sayali@frappe.io",
  "module": "LMS",
  "name": "LMS Program",

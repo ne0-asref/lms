@@ -525,6 +525,7 @@ def get_home_page():
 			"description",
 			"image",
 			"virtual_hardware",
+			"physical_hardware",
 			"offers_certificate",
 			"free_preview",
 			"home_section",
