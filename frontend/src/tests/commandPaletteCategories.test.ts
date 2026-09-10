@@ -153,7 +153,7 @@ describe('command palette categories', () => {
 	it('offers a browse row for each category the user may see', () => {
 		const wrapper = build()
 		expect(titles(wrapper)).toEqual(
-			expect.arrayContaining(['Courses', 'Batches', 'Jobs', 'Programs'])
+			expect.arrayContaining(['Courses', 'Batches', 'Jobs', 'Paths'])
 		)
 	})
 
@@ -177,15 +177,15 @@ describe('command palette categories', () => {
 			offered: true,
 		},
 		{ who: 'admin', sidebar: ADMIN, offered: true },
-	])('offers Programs to a $who: $offered', ({ sidebar, offered }) => {
+	])('offers Paths to a $who: $offered', ({ sidebar, offered }) => {
 		sidebarLinks.value = sidebar
-		expect(titles(build()).includes('Programs')).toBe(offered)
+		expect(titles(build()).includes('Paths')).toBe(offered)
 	})
 
 	it('never offers a category the sidebar is withholding', () => {
 		sidebarLinks.value = GUEST
 		const offered = titles(build())
-		for (const hidden of ['Programs', 'Quizzes', 'Assignments']) {
+		for (const hidden of ['Paths', 'Quizzes', 'Assignments']) {
 			expect(offered).not.toContain(hidden)
 		}
 		expect(offered).toContain('Courses')

@@ -2,7 +2,7 @@
 	<div class="py-5 px-5 w-full lg:w-3/4 lg:px-0 mx-auto">
 		<div class="flex items-center justify-between mb-5">
 			<h1 class="text-lg-semibold text-ink-gray-9">
-				{{ __('All Programs') }}
+				{{ __('All Paths') }}
 			</h1>
 			<TabButtons v-model="currentTab" :options="tabs" class="w-fit" />
 		</div>
@@ -50,7 +50,7 @@
 				</div>
 				<div v-else class="flex-1">
 					<EmptyStateLayout
-						:name="convertToTitleCase(category) + ' Programs'"
+						:name="convertToTitleCase(category) + ' Paths'"
 						icon="lucide-graduation-cap"
 					/>
 				</div>

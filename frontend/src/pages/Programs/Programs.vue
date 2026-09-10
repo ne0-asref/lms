@@ -7,13 +7,13 @@
 	<ListPage
 		v-else
 		:breadcrumbs="breadcrumbs"
-		:title="__('All Programs')"
+		:title="__('All Paths')"
 		:rows="programs.data || []"
 		:total-count="programCount"
 		:loading="programs.list.loading || reloading"
 		:has-next-page="programs.hasNextPage"
 		v-model:page-length="pageLength"
-		empty-name="Programs"
+		empty-name="Paths"
 		empty-icon="lucide-graduation-cap"
 		@load-more="programs.next()"
 	>
@@ -285,13 +285,13 @@ const isStudent = computed(() => {
 
 const breadcrumbs = computed(() => [
 	{
-		label: __('Programs'),
+		label: __('Paths'),
 	},
 ])
 
 usePageMeta(() => {
 	return {
-		title: __('Programs'),
+		title: __('Paths'),
 		icon: brand.favicon,
 	}
 })

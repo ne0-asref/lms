@@ -540,7 +540,7 @@ const getSidebarItems = (forMobile = false) => {
 					activeFor: ['Courses', 'CourseDetail', 'Lesson'],
 				},
 				{
-					label: 'Programs',
+					label: 'Paths',
 					icon: 'Route',
 					to: 'Programs',
 					activeFor: ['Programs', 'ProgramDetail'],

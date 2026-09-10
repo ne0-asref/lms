@@ -15,7 +15,7 @@
 				<div class="bg-surface-blue-2 text-ink-blue-6 p-2 rounded-md leading-5">
 					<span>
 						{{
-							__('This program consists of {0} courses').format(
+							__('This path consists of {0} courses').format(
 								program.data.courses.length
 							)
 						}}
@@ -23,7 +23,7 @@
 					<span v-if="program.data.enforce_course_order">
 						{{
 							__(
-								' designed as a structured learning path to guide your progress. Courses in this program must be taken in order, and each course will unlock as you complete the previous one. '
+								' designed as a structured learning path to guide your progress. Courses in this path must be taken in order, and each course will unlock as you complete the previous one. '
 							)
 						}}
 					</span>
@@ -41,7 +41,7 @@
 
 				<div class="mt-5">
 					<div class="text-sm-semibold text-ink-gray-5">
-						{{ __('Courses in this Program') }}
+						{{ __('Courses in this Path') }}
 					</div>
 					<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
 						<div
@@ -122,7 +122,7 @@ const readOnlyMode = (window as Window & { read_only_mode?: boolean })
 const parent = { name: 'Programs' }
 const { close, saveAndReplace } = useFormRoute(parent)
 
-const title = __('Enrollment for Program {0}').format(props.programName)
+const title = __('Enrollment for Path {0}').format(props.programName)
 
 const program = createResource({
 	url: 'lms.lms.utils.get_program_details',
@@ -152,11 +152,11 @@ const loadingProgram = computed(() => !program.data && !program.error)
 // validate_program_enrollment is.
 const refusal = computed(() => {
 	if (readOnlyMode) return __('This site is in read-only mode.')
-	if (!user.data) return __('Please log in to enroll in this program.')
+	if (!user.data) return __('Please log in to enroll in this path.')
 	if (program.error)
 		return (
 			program.error.messages?.[0] ||
-			__('You are not authorized to enroll in this program.')
+			__('You are not authorized to enroll in this path.')
 		)
 	return ''
 })
@@ -174,7 +174,7 @@ const enrollInProgram = () => {
 		{},
 		{
 			onSuccess() {
-				toast.success(__('Successfully enrolled in program'))
+				toast.success(__('Successfully enrolled in path'))
 				// replace, not push: enrolling moves the student onward to the
 				// program, and Back from there should reach the list rather than a
 				// confirmation page for a program they have already joined.
@@ -185,7 +185,7 @@ const enrollInProgram = () => {
 			},
 			onError(err: { messages?: string[] } | string) {
 				toast.error(
-					__('Failed to enroll in program: {0}').format(
+					__('Failed to enroll in path: {0}').format(
 						typeof err === 'string' ? err : err.messages?.[0] ?? ''
 					)
 				)

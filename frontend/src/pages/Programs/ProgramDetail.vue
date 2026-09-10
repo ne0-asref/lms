@@ -120,7 +120,7 @@ const openCourse = (course: any, enforceCourseOrder: boolean) => {
 
 const breadcrumbs = computed(() => {
 	return [
-		{ label: __('Programs'), route: { name: 'Programs' } },
+		{ label: __('Paths'), route: { name: 'Programs' } },
 		{
 			label: props.programName,
 			route: {

@@ -16,7 +16,7 @@ export const PRIMARY_LABELS: readonly string[] = [
 	'Home',
 	'Courses',
 	'Batches',
-	'Programs',
+	'Paths',
 ]
 
 // Hardcoded rather than matched against `sidebarLinks`, which arrive
@@ -71,7 +71,7 @@ const MAX_PRIMARY_TABS = 5
 
 const SECTION_MAP: Record<string, readonly string[]> = {
 	LEARN: [
-		'Programs',
+		'Paths',
 		'Batches',
 		'Quizzes',
 		'Assignments',

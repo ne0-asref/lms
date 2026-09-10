@@ -60,7 +60,7 @@ const addPrograms = async (
 	viewer: MobileNavViewer,
 	isCurrent: () => boolean
 ): Promise<void> => {
-	if (sidebarLinks.value.some((link) => link.label === 'Programs')) return
+	if (sidebarLinks.value.some((link) => link.label === 'Paths')) return
 	if (!viewer.isSignedIn) return
 	if (!viewer.isModerator && !viewer.isInstructor) {
 		const programs = await call('lms.lms.utils.get_programs')
@@ -69,9 +69,9 @@ const addPrograms = async (
 	}
 	// Asked again on the far side of the await: the list can have been replaced,
 	// and already carry Programs, while the call was in flight.
-	if (sidebarLinks.value.some((link) => link.label === 'Programs')) return
+	if (sidebarLinks.value.some((link) => link.label === 'Paths')) return
 	sidebarLinks.value.splice(1, 0, {
-		label: 'Programs',
+		label: 'Paths',
 		icon: 'Route',
 		to: 'Programs',
 		activeFor: ['Programs', 'ProgramDetail'],

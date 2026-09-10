@@ -34,7 +34,7 @@ export const CATEGORIES: Category[] = [
 	},
 	{
 		id: 'programs',
-		label: 'Programs',
+		label: 'Paths',
 		icon: 'lucide-route',
 		listRoute: 'Programs',
 	},

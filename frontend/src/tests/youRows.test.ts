@@ -38,7 +38,7 @@ const link = (label: string, icon: string, to?: string): NavLink => ({
 // Settings link: the phone has no settings surface for one to point at.
 const SIDEBAR = [
 	link('Home', 'Home', 'Home'),
-	link('Programs', 'Route', 'Programs'),
+	link('Paths', 'Route', 'Programs'),
 	link('Courses', 'BookOpen', 'Courses'),
 	link('Batches', 'Users', 'Batches'),
 	link('Certifications', 'GraduationCap', 'Certifications'),
@@ -103,7 +103,7 @@ describe('destinations', () => {
 				'Pages'
 			)
 		).toEqual([
-			'Programs',
+			'Paths',
 			'Batches',
 			'Quizzes',
 			'Assignments',
@@ -123,9 +123,9 @@ describe('destinations', () => {
 
 	it('shows a destination once when it is in both link lists', () => {
 		const rows = allRows(
-			build({ otherLinks: [link('Programs', 'Route', 'Programs'), ...OTHER] })
+			build({ otherLinks: [link('Paths', 'Route', 'Programs'), ...OTHER] })
 		)
-		expect(rows.filter((row) => row.label === 'Programs')).toHaveLength(1)
+		expect(rows.filter((row) => row.label === 'Paths')).toHaveLength(1)
 	})
 
 	it('keeps an unrecognised destination rather than dropping it', () => {

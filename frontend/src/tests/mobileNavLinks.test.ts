@@ -88,11 +88,11 @@ describe('loadMobileNavLinks', () => {
 		expect(labels(otherLinks)).toEqual([])
 	})
 
-	it('adds Programs next to Courses for a moderator, without asking', async () => {
+	it('adds Paths next to Courses for a moderator, without asking', async () => {
 		await loadMobileNavLinks(MODERATOR)
 		expect(labels(sidebarLinks)).toEqual([
 			'Home',
-			'Programs',
+			'Paths',
 			'Courses',
 			'Batches',
 			'Jobs',
@@ -104,31 +104,31 @@ describe('loadMobileNavLinks', () => {
 		await loadMobileNavLinks(LEARNER)
 		expect(call).toHaveBeenCalledTimes(1)
 		expect(call).toHaveBeenCalledWith('lms.lms.utils.get_programs')
-		expect(labels(sidebarLinks)).not.toContain('Programs')
+		expect(labels(sidebarLinks)).not.toContain('Paths')
 	})
 
-	it('adds Programs for a learner who is enrolled in one', async () => {
+	it('adds Paths for a learner who is enrolled in one', async () => {
 		call.mockResolvedValue({ enrolled: [{ name: 'p1' }], published: [] })
 		await loadMobileNavLinks(LEARNER)
-		expect(labels(sidebarLinks)).toContain('Programs')
+		expect(labels(sidebarLinks)).toContain('Paths')
 	})
 
-	it('does not offer Programs to a signed-out visitor', async () => {
+	it('does not offer Paths to a signed-out visitor', async () => {
 		await loadMobileNavLinks(GUEST)
-		expect(labels(sidebarLinks)).not.toContain('Programs')
+		expect(labels(sidebarLinks)).not.toContain('Paths')
 		expect(call).not.toHaveBeenCalled()
 	})
 
-	it('drops Programs when the admin has switched it off', async () => {
+	it('drops Paths when the admin has switched it off', async () => {
 		// The filter runs after everything is in the lists, so a spliced-in link
 		// is subject to it too. It used to run first, which let `addPrograms` put
 		// the link straight back and left a phone showing a destination the
 		// desktop sidebar had already dropped. `get_sidebar_settings` sends no
-		// `programs` flag today, so this is the ordering under test, not a
+		// `paths` flag today, so this is the ordering under test, not a
 		// setting anyone can reach.
-		settings.data = { programs: 0 }
+		settings.data = { paths: 0 }
 		await loadMobileNavLinks(MODERATOR)
-		expect(labels(sidebarLinks)).not.toContain('Programs')
+		expect(labels(sidebarLinks)).not.toContain('Paths')
 	})
 
 	it('puts the moderator extras in the overflow list, not on the bar', async () => {
@@ -171,6 +171,6 @@ describe('loadMobileNavLinks', () => {
 		await loadMobileNavLinks(MODERATOR)
 		await loadMobileNavLinks(MODERATOR)
 		expect(labels(otherLinks).filter((l) => l === 'Quizzes')).toHaveLength(1)
-		expect(labels(sidebarLinks).filter((l) => l === 'Programs')).toHaveLength(1)
+		expect(labels(sidebarLinks).filter((l) => l === 'Paths')).toHaveLength(1)
 	})
 })

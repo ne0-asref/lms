@@ -1,6 +1,6 @@
 <template>
 	<FormShell
-		:title="isNew ? __('Create Program') : __('Edit Program')"
+		:title="isNew ? __('Create Path') : __('Edit Path')"
 		size="2xl"
 		@close="close"
 	>
@@ -11,7 +11,7 @@
 		</template>
 		<template #default>
 			<div v-if="!canManageProgram" class="p-4 text-base text-ink-gray-6">
-				{{ __('You are not permitted to manage programs.') }}
+				{{ __('You are not permitted to manage paths.') }}
 			</div>
 			<div v-else data-testid="program-fields" class="text-base">
 				<div class="grid grid-cols-1 md:grid-cols-2 gap-5 pb-5">
@@ -162,8 +162,8 @@
 				v-model:open="showFormDialog"
 				:title="
 					currentForm == 'course'
-						? __('Add Course to Program')
-						: __('Enroll Member to Program')
+						? __('Add Course to Path')
+						: __('Enroll Member to Path')
 				"
 				:actions="[
 					{
@@ -190,7 +190,7 @@
 							:filters="{
 								ignore_user_type: 1,
 							}"
-							:label="__('Program Member')"
+							:label="__('Path Member')"
 							:onCreate="
 								(value: string, close: () => void) =>
 									openSettings('Members', close)
@@ -211,7 +211,7 @@
 				<HeaderButton
 					v-if="!isNew"
 					data-testid="program-delete"
-					:label="__('Delete program')"
+					:label="__('Delete path')"
 					icon="lucide-trash-2"
 					variant="outline"
 					theme="red"
@@ -444,7 +444,7 @@ const createNewProgram = () => {
 		},
 		{
 			onSuccess() {
-				toast.success(__('Program created successfully'))
+				toast.success(__('Path created successfully'))
 				afterSave()
 			},
 			onError(err: any) {
@@ -468,7 +468,7 @@ const updateProgram = () => {
 		},
 		{
 			onSuccess() {
-				toast.success(__('Program updated successfully'))
+				toast.success(__('Path updated successfully'))
 				afterSave()
 			},
 			onError(err: any) {
@@ -506,9 +506,9 @@ const addCourse = (close: () => void) => {
 			dirty.value = true
 		}
 		close()
-		toast.success(__('Course added to program successfully'))
+		toast.success(__('Course added to path successfully'))
 	} else {
-		toast.warning(__('Course already added to program'))
+		toast.warning(__('Course already added to path'))
 	}
 }
 
@@ -529,9 +529,9 @@ const addMember = (close: () => void) => {
 			dirty.value = true
 		}
 		close()
-		toast.success(__('Member added to program successfully'))
+		toast.success(__('Member added to path successfully'))
 	} else {
-		toast.warning(__('Member already added to program'))
+		toast.warning(__('Member already added to path'))
 	}
 }
 
@@ -592,9 +592,9 @@ const remove = (
 const deleteProgram = () => {
 	if (isNew.value) return
 	$dialog({
-		title: __('Delete Program'),
+		title: __('Delete Path'),
 		message: __(
-			'Are you sure you want to delete this program? This action cannot be undone.'
+			'Are you sure you want to delete this path? This action cannot be undone.'
 		),
 		actions: [
 			{
@@ -604,7 +604,7 @@ const deleteProgram = () => {
 				onClick(closeDialog: () => void) {
 					submitResource(programs.delete, programId.value, {
 						onSuccess() {
-							toast.success(__('Program deleted successfully'))
+							toast.success(__('Path deleted successfully'))
 							emit('saved')
 							closeDialog()
 							close()

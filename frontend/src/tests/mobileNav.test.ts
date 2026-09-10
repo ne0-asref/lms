@@ -14,7 +14,7 @@ const link = (label: string, icon = 'Circle'): NavLink => ({ label, icon })
 // addOtherLinks()/addQuizzes() append to the separate `otherLinks` array.
 const sidebarLinks = [
 	link('Home'),
-	link('Programs'),
+	link('Paths'),
 	link('Courses'),
 	link('Batches'),
 	link('Jobs'),
@@ -38,7 +38,7 @@ describe('pickPrimaryTabs', () => {
 			'Home',
 			'Courses',
 			'Batches',
-			'Programs',
+			'Paths',
 			'You',
 		])
 	})
@@ -48,7 +48,7 @@ describe('pickPrimaryTabs', () => {
 		expect(pickPrimaryTabs(withoutBatches, true).map((t) => t.label)).toEqual([
 			'Home',
 			'Courses',
-			'Programs',
+			'Paths',
 			'You',
 		])
 	})
@@ -196,7 +196,7 @@ describe('overflowLinks', () => {
 
 	it('keeps everything that did not fit on the bar, in arrival order', () => {
 		expect(labels()).toEqual([
-			'Programs',
+			'Paths',
 			'Batches',
 			'Jobs',
 			'Statistics',
@@ -214,11 +214,11 @@ describe('overflowLinks', () => {
 		// Regression: a re-entrant sidebar reload left Programs in both arrays
 		// and the sheet rendered it twice.
 		const duplicated = overflowLinks(
-			[...sidebarLinks, link('Programs')],
-			[link('Programs'), ...otherLinks],
+			[...sidebarLinks, link('Paths')],
+			[link('Paths'), ...otherLinks],
 			primaryLabels
 		)
-		expect(duplicated.filter((l) => l.label === 'Programs')).toHaveLength(1)
+		expect(duplicated.filter((l) => l.label === 'Paths')).toHaveLength(1)
 	})
 
 	it('leaves out anything already on the bottom bar', () => {
