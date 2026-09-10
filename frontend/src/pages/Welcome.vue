@@ -41,63 +41,83 @@
 					/>
 				</section>
 
-				<section v-if="groups.length" class="space-y-3">
+				<section v-if="programs.length || home.data?.courses_html" class="space-y-3">
 					<h2 class="text-lg font-semibold text-ink-gray-9">
 						{{ __('Courses') }}
 					</h2>
+					<div
+						v-if="home.data?.courses_html"
+						v-safe-html:rich="home.data.courses_html"
+						class="ProseMirror prose prose-sm max-w-none"
+					/>
 					<p v-if="home.data?.preview" class="text-sm text-ink-gray-5">
-						{{ __('Drafts are shown to moderators only; visitors see published courses.') }}
+						{{ __('Drafts are shown to moderators only.') }}
 					</p>
-					<div class="divide-y rounded-md border">
-						<div v-for="group in groups" :key="group.name" class="space-y-3 p-4">
-							<div class="flex items-baseline justify-between gap-4">
-								<div class="flex items-baseline gap-2">
+					<div v-if="programs.length" class="divide-y rounded-md border">
+						<div
+							v-for="program in programs"
+							:key="program.name"
+							class="flex items-start gap-4 p-4"
+						>
+							<img
+								v-if="safeUrl(program.image)"
+								:src="safeUrl(program.image)"
+								alt=""
+								class="size-10 shrink-0 rounded-md object-contain"
+							/>
+							<span
+								v-else
+								class="lucide-cpu size-10 shrink-0 rounded-md p-2 text-ink-gray-5 bg-surface-gray-2"
+							/>
+							<div class="min-w-0 flex-1 space-y-1">
+								<div class="flex flex-wrap items-center gap-2">
 									<span class="text-base font-medium text-ink-gray-9">
-										{{ group.name }}
+										{{ program.title }}
 									</span>
-									<span class="text-sm text-ink-gray-5">
-										{{ courseCount(group.count) }}
-									</span>
-								</div>
-								<router-link
-									v-if="home.data?.has_programs"
-									:to="{ name: 'Programs' }"
-									class="shrink-0 text-sm text-ink-gray-6 hover:text-ink-gray-9"
-								>
-									{{ __('See learning paths') }} &rarr;
-								</router-link>
-							</div>
-
-							<div class="flex flex-wrap gap-2">
-								<router-link
-									v-for="course in group.courses"
-									:key="course.name"
-									:to="{
-										name: 'CourseDetail',
-										params: { courseName: course.name },
-									}"
-									class="flex items-center gap-2 rounded-md border px-2.5 py-1.5 text-sm text-ink-gray-8 hover:border-outline-gray-3"
-								>
-									<span>{{ course.title }}</span>
-									<Badge v-if="!course.published" theme="gray">
+									<Badge v-if="!program.published" theme="gray">
 										{{ __('Draft') }}
 									</Badge>
-									<Badge
-										:theme="course.disable_self_learning ? 'blue' : 'green'"
-									>
-										{{
-											course.disable_self_learning
-												? __('Members')
-												: __('Free')
-										}}
+									<Badge v-if="program.all_free" theme="green">
+										{{ __('Free') }}
 									</Badge>
-									<span
-										v-if="course.enable_certification"
-										class="lucide-award size-4 shrink-0 text-ink-gray-5"
-										:title="__('Certificate on completion')"
-									/>
-								</router-link>
+									<Badge v-if="program.virtual_hardware" theme="blue">
+										{{ __('Virtual hardware') }}
+									</Badge>
+									<Badge v-if="program.offers_certificate" theme="orange">
+										<span class="lucide-award size-3 me-1" />
+										{{ __('Certificate') }}
+									</Badge>
+								</div>
+								<p v-if="program.description" class="text-sm text-ink-gray-6">
+									{{ program.description }}
+								</p>
+								<p class="text-sm text-ink-gray-5">
+									<span>{{ courseCount(program.course_count) }}</span>
+									<template v-if="program.courses.length">
+										<span> &middot; </span>
+										<template v-for="(course, i) in program.courses" :key="course.name">
+											<router-link
+												:to="{
+													name: 'CourseDetail',
+													params: { courseName: course.name },
+												}"
+												class="hover:text-ink-gray-9"
+											>
+												{{ course.title }}<template v-if="!course.published"> ({{ __('draft') }})</template>
+											</router-link><span v-if="i < program.courses.length - 1">, </span>
+										</template>
+									</template>
+								</p>
 							</div>
+							<router-link
+								:to="{
+									name: 'ProgramDetail',
+									params: { programName: program.name },
+								}"
+								class="shrink-0 text-sm text-ink-gray-6 hover:text-ink-gray-9"
+							>
+								{{ __('See path') }} &rarr;
+							</router-link>
 						</div>
 					</div>
 				</section>
@@ -147,7 +167,7 @@ const logo = computed(
 		branding.data?.app_logo?.file_url || branding.data?.banner_image?.file_url
 )
 
-const groups = computed(() => home.data?.groups || [])
+const programs = computed(() => home.data?.programs || [])
 const upcoming = computed(() => home.data?.upcoming || [])
 
 const courseCount = (count: number) =>

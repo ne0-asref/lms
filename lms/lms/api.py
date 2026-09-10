@@ -477,6 +477,7 @@ def get_branding():
 # empty string and the section disappears.
 WELCOME_PAGE_ROUTE = "lms-home"
 UPDATES_PAGE_ROUTE = "lms-updates"
+COURSES_PAGE_ROUTE = "lms-courses"
 
 
 def get_web_page_html(route: str) -> str:
@@ -502,42 +503,73 @@ def get_web_page_html(route: str) -> str:
 
 @frappe.whitelist(allow_guest=True)  # nosemgrep: frappe-semgrep-rules.rules.security.guest-whitelisted-method
 def get_home_page():
-	"""Everything the welcome page draws: the site's own prose, plus a catalogue
-	overview grouped by category.
+	"""Everything the welcome page draws: the site's own prose, plus one row per
+	program (a learning path) with its courses.
 
 	One call rather than one per section: the page is a single screen a visitor
 	sees before anything else, and three round trips would have it assembling
 	itself in front of them.
 	"""
-	# Moderators see the catalogue as it will look, drafts included and marked,
-	# so the page can be judged before a single course is published.
+	# Moderators see the page as it will look, drafts included and marked, so
+	# it can be judged before a single program or course is published.
 	can_preview = frappe.session.user != "Guest" and (
 		"Moderator" in frappe.get_roles() or "System Manager" in frappe.get_roles()
 	)
-	courses = frappe.get_all(
-		"LMS Course",
+
+	programs = frappe.get_all(
+		"LMS Program",
 		filters={} if can_preview else {"published": 1},
 		fields=[
 			"name",
 			"title",
-			"short_introduction",
-			"disable_self_learning",
-			"enable_certification",
+			"description",
 			"image",
-			"category",
+			"virtual_hardware",
+			"offers_certificate",
 			"published",
 		],
-		order_by="title asc",
+		order_by="home_order asc, title asc",
 	)
 
-	# Courses with no category still belong somewhere, and a site that has never
-	# set one up should not see an "Uncategorised" heading it did not ask for.
-	groups = {}
-	published_count = {}
-	for course in courses:
-		label = course.pop("category") or _("Courses")
-		groups.setdefault(label, []).append(course)
-		published_count[label] = published_count.get(label, 0) + (1 if course.published else 0)
+	course_meta = {}
+	if programs:
+		rows = frappe.get_all(
+			"LMS Program Course",
+			filters={"parent": ["in", [p.name for p in programs]]},
+			fields=["parent", "course", "course_title", "idx"],
+			order_by="idx asc",
+		)
+		names = list({r.course for r in rows})
+		if names:
+			for c in frappe.get_all(
+				"LMS Course",
+				filters={"name": ["in", names]},
+				fields=["name", "published", "disable_self_learning"],
+			):
+				course_meta[c.name] = c
+		by_program = {}
+		for r in rows:
+			by_program.setdefault(r.parent, []).append(r)
+		for p in programs:
+			courses = []
+			for r in by_program.get(p.name, []):
+				meta = course_meta.get(r.course)
+				if not meta:
+					continue
+				if not (meta.published or can_preview):
+					continue
+				courses.append(
+					{
+						"name": r.course,
+						"title": r.course_title,
+						"published": meta.published,
+						"disable_self_learning": meta.disable_self_learning,
+					}
+				)
+			p.courses = courses
+			p.course_count = sum(1 for c in courses if c["published"])
+			p.total_courses = len(courses)
+			p.all_free = bool(courses) and all(not c["disable_self_learning"] for c in courses)
 
 	upcoming = frappe.get_all(
 		"LMS Course",
@@ -554,12 +586,10 @@ def get_home_page():
 		"title": title_rows[0].title if title_rows else "",
 		"welcome_html": get_web_page_html(WELCOME_PAGE_ROUTE),
 		"updates_html": get_web_page_html(UPDATES_PAGE_ROUTE),
+		"courses_html": get_web_page_html(COURSES_PAGE_ROUTE),
 		"has_programs": bool(frappe.get_all("LMS Program", filters={"published": 1}, limit=1)),
 		"preview": can_preview,
-		"groups": [
-			{"name": label, "count": published_count.get(label, 0), "courses": items}
-			for label, items in sorted(groups.items())
-		],
+		"programs": programs,
 		"upcoming": upcoming,
 	}
 
