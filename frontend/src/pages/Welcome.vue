@@ -71,9 +71,9 @@
 								/>
 								<span
 									v-else
-									class="flex size-10 shrink-0 items-center justify-center rounded-md bg-surface-gray-2 text-ink-gray-6"
+									class="flex size-10 shrink-0 items-center justify-center text-ink-gray-6"
 								>
-									<span :class="iconClass(program.icon)" class="size-5" />
+									<span :class="iconClass(program.icon)" class="size-7" />
 								</span>
 								<div class="min-w-0 flex-1 space-y-1">
 									<div class="flex flex-wrap items-center gap-2">
@@ -83,8 +83,8 @@
 										<Badge v-if="!program.published" theme="gray">
 											{{ __('Draft') }}
 										</Badge>
-										<Badge v-if="program.all_free" theme="green">
-											{{ __('Free') }}
+										<Badge v-if="program.free_preview" theme="green">
+											{{ __('Free preview') }}
 										</Badge>
 										<Badge v-if="program.virtual_hardware" theme="blue">
 											{{ __('Virtual hardware') }}

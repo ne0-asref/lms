@@ -18,6 +18,7 @@
   "column_break_home",
   "virtual_hardware",
   "offers_certificate",
+  "free_preview",
   "home_order",
   "home_section",
   "icon",
@@ -132,6 +133,13 @@
   },
   {
    "default": "0",
+   "fieldname": "free_preview",
+   "fieldtype": "Check",
+   "label": "Free preview",
+   "description": "Show a 'Free preview' badge on the home page row"
+  },
+  {
+   "default": "0",
    "fieldname": "home_order",
    "fieldtype": "Int",
    "label": "Order on home page"
@@ -152,7 +160,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-09-10 08:00:00.000000",
+ "modified": "2026-09-10 09:00:00.000000",
  "modified_by": "sayali@frappe.io",
  "module": "LMS",
  "name": "LMS Program",
