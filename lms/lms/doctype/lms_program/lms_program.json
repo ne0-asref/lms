@@ -12,6 +12,13 @@
   "column_break_cwjx",
   "enforce_course_order",
   "column_break_mikl",
+  "section_break_home",
+  "description",
+  "image",
+  "column_break_home",
+  "virtual_hardware",
+  "offers_certificate",
+  "home_order",
   "section_break_vhhu",
   "program_courses",
   "program_members",
@@ -88,12 +95,50 @@
   {
    "fieldname": "column_break_mikl",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_home",
+   "fieldtype": "Section Break",
+   "label": "Presentation"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "label": "Description"
+  },
+  {
+   "fieldname": "image",
+   "fieldtype": "Attach Image",
+   "label": "Image"
+  },
+  {
+   "fieldname": "column_break_home",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "virtual_hardware",
+   "fieldtype": "Check",
+   "label": "Supports virtual hardware",
+   "description": "The path can be completed on a simulator, without physical boards"
+  },
+  {
+   "default": "0",
+   "fieldname": "offers_certificate",
+   "fieldtype": "Check",
+   "label": "Certificate on completion"
+  },
+  {
+   "default": "0",
+   "fieldname": "home_order",
+   "fieldtype": "Int",
+   "label": "Order on home page"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-03 10:51:50.616781",
+ "modified": "2026-09-10 07:00:00.000000",
  "modified_by": "sayali@frappe.io",
  "module": "LMS",
  "name": "LMS Program",
