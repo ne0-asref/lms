@@ -53,71 +53,64 @@
 					<p v-if="home.data?.preview" class="text-sm text-ink-gray-5">
 						{{ __('Drafts are shown to moderators only.') }}
 					</p>
-					<div v-if="programs.length" class="divide-y rounded-md border">
-						<div
-							v-for="program in programs"
-							:key="program.name"
-							class="flex items-start gap-4 p-4"
-						>
-							<img
-								v-if="safeUrl(program.image)"
-								:src="safeUrl(program.image)"
-								alt=""
-								class="size-10 shrink-0 rounded-md object-contain"
-							/>
-							<span
-								v-else
-								class="lucide-cpu size-10 shrink-0 rounded-md p-2 text-ink-gray-5 bg-surface-gray-2"
-							/>
-							<div class="min-w-0 flex-1 space-y-1">
-								<div class="flex flex-wrap items-center gap-2">
-									<span class="text-base font-medium text-ink-gray-9">
-										{{ program.title }}
-									</span>
-									<Badge v-if="!program.published" theme="gray">
-										{{ __('Draft') }}
-									</Badge>
-									<Badge v-if="program.all_free" theme="green">
-										{{ __('Free') }}
-									</Badge>
-									<Badge v-if="program.virtual_hardware" theme="blue">
-										{{ __('Virtual hardware') }}
-									</Badge>
-									<Badge v-if="program.offers_certificate" theme="orange">
-										<span class="lucide-award size-3 me-1" />
-										{{ __('Certificate') }}
-									</Badge>
-								</div>
-								<p v-if="program.description" class="text-sm text-ink-gray-6">
-									{{ program.description }}
-								</p>
-								<p class="text-sm text-ink-gray-5">
-									<span>{{ courseCount(program.course_count) }}</span>
-									<template v-if="program.courses.length">
-										<span> &middot; </span>
-										<template v-for="(course, i) in program.courses" :key="course.name">
-											<router-link
-												:to="{
-													name: 'CourseDetail',
-													params: { courseName: course.name },
-												}"
-												class="hover:text-ink-gray-9"
-											>
-												{{ course.title }}<template v-if="!course.published"> ({{ __('draft') }})</template>
-											</router-link><span v-if="i < program.courses.length - 1">, </span>
-										</template>
-									</template>
-								</p>
-							</div>
-							<router-link
-								:to="{
-									name: 'ProgramDetail',
-									params: { programName: program.name },
-								}"
-								class="shrink-0 text-sm text-ink-gray-6 hover:text-ink-gray-9"
+					<div v-for="section in sections" :key="section.name" class="space-y-2">
+						<h3 v-if="section.name" class="text-base font-medium text-ink-gray-8">
+							{{ section.name }}
+						</h3>
+						<div class="divide-y rounded-md border">
+							<div
+								v-for="program in section.programs"
+								:key="program.name"
+								class="flex items-center gap-4 p-4"
 							>
-								{{ __('See path') }} &rarr;
-							</router-link>
+								<img
+									v-if="safeUrl(program.image)"
+									:src="safeUrl(program.image)"
+									alt=""
+									class="size-10 shrink-0 rounded-md object-contain"
+								/>
+								<span
+									v-else
+									class="flex size-10 shrink-0 items-center justify-center rounded-md bg-surface-gray-2 text-ink-gray-6"
+								>
+									<span :class="iconClass(program.icon)" class="size-5" />
+								</span>
+								<div class="min-w-0 flex-1 space-y-1">
+									<div class="flex flex-wrap items-center gap-2">
+										<span class="text-base font-medium text-ink-gray-9">
+											{{ program.title }}
+										</span>
+										<Badge v-if="!program.published" theme="gray">
+											{{ __('Draft') }}
+										</Badge>
+										<Badge v-if="program.all_free" theme="green">
+											{{ __('Free') }}
+										</Badge>
+										<Badge v-if="program.virtual_hardware" theme="blue">
+											{{ __('Virtual hardware') }}
+										</Badge>
+										<Badge v-if="program.offers_certificate" theme="orange">
+											<span class="lucide-award size-3 me-1" />
+											{{ __('Certificate') }}
+										</Badge>
+									</div>
+									<p v-if="program.description" class="text-sm text-ink-gray-6">
+										{{ program.description }}
+									</p>
+									<p class="text-sm text-ink-gray-5">
+										{{ courseCount(program.course_count) }}<template v-if="home.data?.preview && program.total_courses > program.course_count"> ({{ __('{0} in draft').format(program.total_courses - program.course_count) }})</template>
+									</p>
+								</div>
+								<router-link
+									:to="{
+										name: 'ProgramDetail',
+										params: { programName: program.name },
+									}"
+									class="shrink-0 text-sm text-ink-gray-6 hover:text-ink-gray-9"
+								>
+									{{ __('See path') }} &rarr;
+								</router-link>
+							</div>
 						</div>
 					</div>
 				</section>
@@ -168,6 +161,27 @@ const logo = computed(
 )
 
 const programs = computed(() => home.data?.programs || [])
+
+// Sections in order of first appearance, so `home_order` decides both the
+// order of sections and the order of rows within them.
+const sections = computed(() => {
+	const out: { name: string; programs: any[] }[] = []
+	for (const program of programs.value) {
+		const name = program.home_section || ''
+		let section = out.find((s) => s.name === name)
+		if (!section) {
+			section = { name, programs: [] }
+			out.push(section)
+		}
+		section.programs.push(program)
+	}
+	return out
+})
+
+// A Lucide icon name from the record, as the frappe-ui vite plugin exposes
+// them (`lucide-<name>` classes); an unset or odd value falls back to cpu.
+const iconClass = (icon?: string) =>
+	'lucide-' + (icon && /^[a-z0-9-]+$/.test(icon) ? icon : 'cpu')
 const upcoming = computed(() => home.data?.upcoming || [])
 
 const courseCount = (count: number) =>

@@ -19,6 +19,8 @@
   "virtual_hardware",
   "offers_certificate",
   "home_order",
+  "home_section",
+  "icon",
   "section_break_vhhu",
   "program_courses",
   "program_members",
@@ -133,12 +135,24 @@
    "fieldname": "home_order",
    "fieldtype": "Int",
    "label": "Order on home page"
+  },
+  {
+   "fieldname": "home_section",
+   "fieldtype": "Data",
+   "label": "Section on home page",
+   "description": "Programs with the same section are listed together, e.g. \"Platforms\" and \"Knowledge areas\""
+  },
+  {
+   "fieldname": "icon",
+   "fieldtype": "Data",
+   "label": "Icon",
+   "description": "Lucide icon name used when no image is set, e.g. cpu, wifi, monitor"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-09-10 07:00:00.000000",
+ "modified": "2026-09-10 08:00:00.000000",
  "modified_by": "sayali@frappe.io",
  "module": "LMS",
  "name": "LMS Program",

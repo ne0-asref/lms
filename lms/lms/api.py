@@ -526,6 +526,8 @@ def get_home_page():
 			"image",
 			"virtual_hardware",
 			"offers_certificate",
+			"home_section",
+			"icon",
 			"published",
 		],
 		order_by="home_order asc, title asc",
