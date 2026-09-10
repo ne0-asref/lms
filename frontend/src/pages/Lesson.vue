@@ -599,6 +599,12 @@ const renderEditor = (holder, content) => {
 			const root = document.getElementById(holder)
 			if (!root) return
 			root.querySelectorAll('a').forEach((a) => {
+				// A fragment link points at this page: leave it as an in-page
+				// jump, as the sanitiser hooks already do.
+				if ((a.getAttribute('href') || '').startsWith('#')) {
+					a.removeAttribute('target')
+					return
+				}
 				a.setAttribute('target', '_blank')
 				a.setAttribute('rel', 'noopener noreferrer')
 			})
