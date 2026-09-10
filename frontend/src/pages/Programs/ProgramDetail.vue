@@ -14,7 +14,7 @@
 
 				<a
 					v-if="program.data?.offers_certificate && program.data.progress >= 100"
-					:href="`/claim/${encodeURIComponent(program.data.name)}`"
+					:href="safeUrl(`/claim/${encodeURIComponent(program.data.name)}`)"
 					class="text-sm text-ink-gray-7 underline hover:text-ink-gray-9"
 				>
 					{{ __('Claim certificate') }}
@@ -79,6 +79,7 @@
 	</PageBody>
 </template>
 <script setup lang="ts">
+import { safeUrl } from '@/utils/safeUrl'
 import { computed, inject, onMounted } from 'vue'
 import PageHeader from '@/components/Layouts/PageHeader.vue'
 import PageBody from '@/components/Layouts/PageBody.vue'
