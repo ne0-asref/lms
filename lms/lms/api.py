@@ -509,9 +509,14 @@ def get_home_page():
 	sees before anything else, and three round trips would have it assembling
 	itself in front of them.
 	"""
+	# Moderators see the catalogue as it will look, drafts included and marked,
+	# so the page can be judged before a single course is published.
+	can_preview = frappe.session.user != "Guest" and (
+		"Moderator" in frappe.get_roles() or "System Manager" in frappe.get_roles()
+	)
 	courses = frappe.get_all(
 		"LMS Course",
-		filters={"published": 1},
+		filters={} if can_preview else {"published": 1},
 		fields=[
 			"name",
 			"title",
@@ -520,6 +525,7 @@ def get_home_page():
 			"enable_certification",
 			"image",
 			"category",
+			"published",
 		],
 		order_by="title asc",
 	)
@@ -527,9 +533,11 @@ def get_home_page():
 	# Courses with no category still belong somewhere, and a site that has never
 	# set one up should not see an "Uncategorised" heading it did not ask for.
 	groups = {}
+	published_count = {}
 	for course in courses:
 		label = course.pop("category") or _("Courses")
 		groups.setdefault(label, []).append(course)
+		published_count[label] = published_count.get(label, 0) + (1 if course.published else 0)
 
 	upcoming = frappe.get_all(
 		"LMS Course",
@@ -538,12 +546,18 @@ def get_home_page():
 		order_by="title asc",
 	)
 
+	title_rows = frappe.get_all(
+		"Web Page", filters={"route": WELCOME_PAGE_ROUTE, "published": 1}, fields=["title"], limit=1
+	)
+
 	return {
+		"title": title_rows[0].title if title_rows else "",
 		"welcome_html": get_web_page_html(WELCOME_PAGE_ROUTE),
 		"updates_html": get_web_page_html(UPDATES_PAGE_ROUTE),
 		"has_programs": bool(frappe.get_all("LMS Program", filters={"published": 1}, limit=1)),
+		"preview": can_preview,
 		"groups": [
-			{"name": label, "count": len(items), "courses": items}
+			{"name": label, "count": published_count.get(label, 0), "courses": items}
 			for label, items in sorted(groups.items())
 		],
 		"upcoming": upcoming,

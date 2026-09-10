@@ -1,12 +1,20 @@
 <template>
 	<div class="w-full p-5">
 		<div class="mx-auto max-w-4xl space-y-10 py-6">
-			<div v-if="safeUrl(logo)" class="flex justify-center">
-				<img
-					:src="safeUrl(logo)"
-					:alt="branding.data?.app_name || ''"
-					class="h-10 w-auto"
-				/>
+			<div class="space-y-4">
+				<div v-if="safeUrl(logo)" class="flex justify-center">
+					<img
+						:src="safeUrl(logo)"
+						:alt="branding.data?.app_name || ''"
+						class="h-10 w-auto"
+					/>
+				</div>
+				<h1
+					v-if="home.data?.title"
+					class="text-center text-2xl font-semibold text-ink-gray-9"
+				>
+					{{ home.data.title }}
+				</h1>
 			</div>
 
 			<div
@@ -37,6 +45,9 @@
 					<h2 class="text-lg font-semibold text-ink-gray-9">
 						{{ __('Courses') }}
 					</h2>
+					<p v-if="home.data?.preview" class="text-sm text-ink-gray-5">
+						{{ __('Drafts are shown to moderators only; visitors see published courses.') }}
+					</p>
 					<div class="divide-y rounded-md border">
 						<div v-for="group in groups" :key="group.name" class="space-y-3 p-4">
 							<div class="flex items-baseline justify-between gap-4">
@@ -68,6 +79,9 @@
 									class="flex items-center gap-2 rounded-md border px-2.5 py-1.5 text-sm text-ink-gray-8 hover:border-outline-gray-3"
 								>
 									<span>{{ course.title }}</span>
+									<Badge v-if="!course.published" theme="gray">
+										{{ __('Draft') }}
+									</Badge>
 									<Badge
 										:theme="course.disable_self_learning ? 'blue' : 'green'"
 									>
