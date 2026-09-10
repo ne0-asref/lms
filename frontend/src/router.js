@@ -43,8 +43,9 @@ router.beforeEach(async (to, from, next) => {
 	}
 
 	if (!isLoggedIn) {
-		if (to.name == 'Home') router.push({ name: 'Courses' })
-
+		// No redirect away from Home: the welcome page is written for exactly
+		// this visitor. Guest access is still what decides whether they get any
+		// of the app at all.
 		await settings.promise
 		if (!settings.data.allow_guest_access) {
 			window.location.href = '/login'

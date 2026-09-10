@@ -494,12 +494,20 @@ const getSidebarItems = (forMobile = false) => {
 			hideLabel: true,
 			items: [
 				{
+					// The welcome page is public: it is the one destination a
+					// signed-out visitor is meant to land on, so no condition.
 					label: 'Home',
 					icon: 'Home',
 					to: 'Home',
 					activeFor: ['Home'],
+				},
+				{
+					label: 'Dashboard',
+					icon: 'LayoutDashboard',
+					to: 'Dashboard',
+					activeFor: ['Dashboard'],
 					condition: () => {
-						return userResource?.data
+						return userResource?.data && settings.data?.show_dashboard
 					},
 				},
 				{

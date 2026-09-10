@@ -115,6 +115,12 @@ export interface NavTarget {
 export const NAV_TARGETS: NavTarget[] = [
 	{ id: 'home', label: 'Home', icon: 'lucide-home', route: 'Home' },
 	{
+		id: 'dashboard',
+		label: 'Dashboard',
+		icon: 'lucide-layout-dashboard',
+		route: 'Dashboard',
+	},
+	{
 		id: 'certifications',
 		label: 'Certifications',
 		icon: 'lucide-graduation-cap',

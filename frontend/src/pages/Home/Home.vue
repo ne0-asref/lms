@@ -175,7 +175,7 @@ const subtitle = computed(() => {
 
 usePageMeta(() => {
 	return {
-		title: __('Home'),
+		title: __('Dashboard'),
 		icon: brand.favicon,
 	}
 })

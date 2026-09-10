@@ -8,6 +8,15 @@ export const routes = [
 	{
 		path: '/',
 		name: 'Home',
+		component: () => import('@/pages/Welcome.vue'),
+	},
+	{
+		// The signed-in workspace — live classes, evaluations, streak. It used
+		// to sit at '/', which meant a first-time visitor's first screen was a
+		// dashboard of things they had not done yet. '/' is now the welcome
+		// page, and this keeps its own address so a bookmark of it survives.
+		path: '/dashboard',
+		name: 'Dashboard',
 		component: () => import('@/pages/Home/Home.vue'),
 	},
 	{
