@@ -471,6 +471,85 @@ def get_branding():
 	return settings
 
 
+# Routes of the two Web Pages the welcome page reads its prose from. They are
+# site data rather than strings in this repo so an admin edits the copy in
+# Frappe's own Web Page editor; a site that has never created them just gets an
+# empty string and the section disappears.
+WELCOME_PAGE_ROUTE = "lms-home"
+UPDATES_PAGE_ROUTE = "lms-updates"
+
+
+def get_web_page_html(route: str) -> str:
+	"""Body of the published Web Page at `route`, or "" when there is none.
+
+	A Web Page keeps its body in one of two fields depending on `content_type`,
+	so reading `main_section` alone silently renders nothing for a page authored
+	as raw HTML.
+	"""
+	pages = frappe.get_all(
+		"Web Page",
+		filters={"route": route, "published": 1},
+		fields=["main_section", "main_section_html", "content_type"],
+		limit=1,
+	)
+	if not pages:
+		return ""
+
+	page = pages[0]
+	html = page.main_section_html if page.content_type == "HTML" else page.main_section
+	return html or ""
+
+
+@frappe.whitelist(allow_guest=True)  # nosemgrep: frappe-semgrep-rules.rules.security.guest-whitelisted-method
+def get_home_page():
+	"""Everything the welcome page draws: the site's own prose, plus a catalogue
+	overview grouped by category.
+
+	One call rather than one per section: the page is a single screen a visitor
+	sees before anything else, and three round trips would have it assembling
+	itself in front of them.
+	"""
+	courses = frappe.get_all(
+		"LMS Course",
+		filters={"published": 1},
+		fields=[
+			"name",
+			"title",
+			"short_introduction",
+			"disable_self_learning",
+			"enable_certification",
+			"image",
+			"category",
+		],
+		order_by="title asc",
+	)
+
+	# Courses with no category still belong somewhere, and a site that has never
+	# set one up should not see an "Uncategorised" heading it did not ask for.
+	groups = {}
+	for course in courses:
+		label = course.pop("category") or _("Courses")
+		groups.setdefault(label, []).append(course)
+
+	upcoming = frappe.get_all(
+		"LMS Course",
+		filters={"upcoming": 1, "published": 0},
+		fields=["name", "title", "short_introduction"],
+		order_by="title asc",
+	)
+
+	return {
+		"welcome_html": get_web_page_html(WELCOME_PAGE_ROUTE),
+		"updates_html": get_web_page_html(UPDATES_PAGE_ROUTE),
+		"has_programs": bool(frappe.get_all("LMS Program", filters={"published": 1}, limit=1)),
+		"groups": [
+			{"name": label, "count": len(items), "courses": items}
+			for label, items in sorted(groups.items())
+		],
+		"upcoming": upcoming,
+	}
+
+
 @frappe.whitelist()
 def get_unsplash_photos(keyword: str = None):
 	if keyword is not None and not isinstance(keyword, str):
@@ -1916,6 +1995,7 @@ def get_lms_settings():
 		"enforce_video_completion",
 		"enforce_quiz_completion",
 		"enforce_assignment_completion",
+		"show_dashboard",
 	]
 
 	settings = frappe._dict()
