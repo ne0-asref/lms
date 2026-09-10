@@ -2778,6 +2778,7 @@ def get_program_details(program_name: str) -> dict:
 			"course_count",
 			"published",
 			"enforce_course_order",
+			"offers_certificate",
 		],
 		as_dict=1,
 	)

@@ -12,6 +12,21 @@
 					{{ program.data.progress }}% {{ __('completed') }}
 				</Badge>
 
+				<a
+					v-if="program.data?.offers_certificate && program.data.progress >= 100"
+					:href="`/claim/${encodeURIComponent(program.data.name)}`"
+					class="text-sm text-ink-gray-7 underline hover:text-ink-gray-9"
+				>
+					{{ __('Claim certificate') }}
+				</a>
+				<Badge
+					v-else-if="program.data?.offers_certificate"
+					theme="orange"
+				>
+					<span class="lucide-award size-3 me-1" />
+					{{ __('Certificate on completion') }}
+				</Badge>
+
 				<Tooltip
 					v-if="program.data?.enforce_course_order"
 					placement="right"
