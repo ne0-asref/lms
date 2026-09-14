@@ -305,6 +305,11 @@ export function getEditorTools(
 						embedUrl: 'https://wokwi.com/projects/<%= remote_id %>',
 						html: "<iframe style='width: 100%; height: 600px; border: 0; border-radius: 4px; overflow: hidden;' sandbox='allow-modals allow-forms allow-popups allow-scripts allow-same-origin' frameborder='0' allowfullscreen='true'></iframe>",
 					},
+					sim86: {
+						regex: /^https:\/\/app\.sim86\.com\/embed\/([0-9a-f-]{36}(?:\?[^\s#]*)?)$/,
+						embedUrl: 'https://app.sim86.com/embed/<%= remote_id %>',
+						html: "<iframe style='width: 100%; height: 560px; border: 0; border-radius: 4px; overflow: hidden;' sandbox='allow-modals allow-forms allow-popups allow-scripts allow-same-origin' frameborder='0' allowfullscreen='true' allow='fullscreen'></iframe>",
+					},
 				},
 			},
 		},
