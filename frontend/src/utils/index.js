@@ -300,6 +300,11 @@ export function getEditorTools(
 							'https://codesandbox.io/embed/<%= remote_id %>?view=editor+%2B+preview&module=%2Findex.html',
 						html: "<iframe style='width: 100%; height: 500px; border: 0; border-radius: 4px; overflow: hidden;' sandbox='allow-modals allow-forms allow-popups allow-scripts allow-same-origin' frameborder='0' allowfullscreen='true'></iframe>",
 					},
+					wokwi: {
+						regex: /^https:\/\/wokwi\.com\/projects\/(\d+)(?:[\/?#].*)?$/,
+						embedUrl: 'https://wokwi.com/projects/<%= remote_id %>',
+						html: "<iframe style='width: 100%; height: 600px; border: 0; border-radius: 4px; overflow: hidden;' sandbox='allow-modals allow-forms allow-popups allow-scripts allow-same-origin' frameborder='0' allowfullscreen='true'></iframe>",
+					},
 				},
 			},
 		},
