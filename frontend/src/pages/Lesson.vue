@@ -397,6 +397,7 @@ import {
 	highlightText,
 	sanitizeEditorJs,
 } from '@/utils'
+import { renderMath } from '@/utils/math'
 import { sessionStore } from '@/stores/session'
 import { useSidebar } from '@/stores/sidebar'
 import { useSettings } from '@/stores/settings'
@@ -608,6 +609,7 @@ const renderEditor = (holder, content) => {
 				a.setAttribute('target', '_blank')
 				a.setAttribute('rel', 'noopener noreferrer')
 			})
+			renderMath(root)
 		},
 	})
 }
