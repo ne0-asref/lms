@@ -971,17 +971,25 @@ def as_filter_conditions(filters: dict) -> list:
 @frappe.whitelist(allow_guest=True)
 @rate_limit(limit=500, seconds=60 * 60)
 def get_course_categories() -> list:
-	"""Returns the full, unfiltered list of categories used by published courses."""
+	"""Returns the full, unfiltered list of categories used by published courses
+	(by any course, for a moderator)."""
 
 	if not guest_access_allowed():
 		return []
+
+	# A moderator's course list has an Unpublished tab, so the filter offers
+	# the categories of unpublished courses too; everyone else sees only the
+	# categories of courses they can open.
+	filters = {"category": ["is", "set"]}
+	if not has_moderator_role():
+		filters["published"] = 1
 
 	# Distinct category strings are inherently bounded (one per category, not per
 	# course), so the full set is intended; limit_page_length=0 makes the
 	# "no page cap" explicit rather than relying on get_all's default.
 	rows = frappe.get_all(
 		"LMS Course",
-		filters={"published": 1, "category": ["is", "set"]},
+		filters=filters,
 		pluck="category",
 		distinct=True,
 		order_by="category asc",
