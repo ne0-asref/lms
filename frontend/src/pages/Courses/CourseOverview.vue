@@ -87,6 +87,11 @@
 					</div>
 				</section>
 
+				<WhereYouAre
+					v-if="course.data.name"
+					:courseName="course.data.name"
+				/>
+
 				<section>
 					<div class="flex items-baseline justify-between gap-4 mb-4">
 						<h2 class="text-3xl-semibold text-ink-gray-9">
@@ -160,6 +165,7 @@ import type {
 } from '@/types'
 import CourseCardOverlay from '@/components/CourseCardOverlay.vue'
 import CourseOutline from '@/components/CourseOutline.vue'
+import WhereYouAre from '@/components/Tutoring/WhereYouAre.vue'
 import SkeletonLoader from '@/components/SkeletonLoader.vue'
 
 // Tag badges were all gray, so a row of them read as one label. Pick a theme
