@@ -287,6 +287,11 @@
 								:quizId="lesson.data.quiz_id"
 							/>
 						</div>
+						<ExercisePanel
+							v-if="lesson.data?.name"
+							:key="`exercise-${lesson.data.name}`"
+							:lessonName="lesson.data.name"
+						/>
 					</div>
 					<div
 						v-if="lesson.data && (allowDiscussions || tabs.length > 1)"
@@ -423,6 +428,7 @@ import HeaderButton from '@/components/HeaderButton.vue'
 import UserAvatar from '@/components/UserAvatar.vue'
 import Notes from '@/components/Notes/Notes.vue'
 import InlineLessonMenu from '@/components/Notes/InlineLessonMenu.vue'
+import ExercisePanel from '@/components/Tutoring/ExercisePanel.vue'
 import { getLmsRoute } from '@/utils/basePath'
 import { provideStudentView } from '@/composables/useStudentView'
 
