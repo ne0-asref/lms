@@ -566,6 +566,15 @@ const getSidebarItems = (forMobile = false) => {
 					activeFor: ['Batches', 'BatchDetail', 'Batch', 'BatchForm'],
 				},
 				{
+					label: 'My Progress',
+					icon: 'Target',
+					to: 'Progress',
+					activeFor: ['Progress'],
+					condition: () => {
+						return userResource?.data
+					},
+				},
+				{
 					label: 'Certifications',
 					icon: 'GraduationCap',
 					to: 'CertifiedParticipants',

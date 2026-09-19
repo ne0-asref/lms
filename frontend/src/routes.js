@@ -158,6 +158,14 @@ export const routes = [
 		props: true,
 	},
 	{
+		// The tutoring layer's own page. It reads a generic endpoint that
+		// answers "not enabled" on a site with no tutoring app, so the route
+		// is always registered and the page explains itself.
+		path: '/progress',
+		name: 'Progress',
+		component: () => import('@/pages/Progress.vue'),
+	},
+	{
 		path: '/statistics',
 		name: 'Statistics',
 		component: () => import('@/pages/Statistics.vue'),
