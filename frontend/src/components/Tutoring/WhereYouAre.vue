@@ -41,7 +41,7 @@
 			<div class="text-p-base text-ink-gray-8">
 				<span>{{ __('Recommended next') }}: </span>
 				<span class="font-semibold text-ink-gray-9">{{
-					recommended.title
+					recommendedLabel
 				}}</span>
 				<span v-if="recommended.reason" class="text-ink-gray-6">
 					. {{ recommended.reason }}
@@ -76,6 +76,7 @@ interface ConceptRow {
 interface Recommendation {
 	lesson: string
 	title: string
+	chapter_title?: string
 	reason?: string
 }
 
@@ -110,6 +111,13 @@ const needsWorkCount = computed<number>(
 const recommended = computed<Recommendation | null>(
 	() => progress.data?.recommended || null
 )
+
+// Lesson titles repeat across chapters ("Overview"), so the chapter leads.
+const recommendedLabel = computed<string>(() => {
+	const r = recommended.value
+	if (!r) return ''
+	return r.chapter_title ? `${r.chapter_title}, ${r.title}` : r.title
+})
 
 const recommendedRoute = computed(() => {
 	const params = lessonRouteParams(
