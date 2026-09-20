@@ -222,6 +222,12 @@
 								</router-link>
 							</div>
 						</div>
+						<ExercisePanel
+							v-if="lesson.data?.name"
+							placement="status"
+							:key="`exercise-status-${lesson.data.name}`"
+							:lessonName="lesson.data.name"
+						/>
 
 						<div v-if="!zenModeEnabled" class="flex items-center mt-4 md:mt-2">
 							<span
@@ -289,6 +295,7 @@
 						</div>
 						<ExercisePanel
 							v-if="lesson.data?.name"
+							placement="editor"
 							:key="`exercise-${lesson.data.name}`"
 							:lessonName="lesson.data.name"
 						/>

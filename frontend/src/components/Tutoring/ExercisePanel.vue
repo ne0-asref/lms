@@ -1,10 +1,13 @@
 <template>
-	<section v-if="status.data?.enabled" class="mt-10 border-t pt-8 space-y-4">
+	<section
+		v-if="status.data?.enabled && (placement === 'status' || files.length)"
+		:class="placement === 'status' ? 'mt-6 space-y-4' : 'mt-10 border-t pt-8 space-y-4'"
+	>
 		<h2 class="text-lg-semibold text-ink-gray-9">
-			{{ __('Exercise status') }}
+			{{ placement === 'status' ? __('Exercise status') : __('Try it here') }}
 		</h2>
 
-		<div class="border rounded-md p-4 space-y-3">
+		<div v-if="placement === 'status'" class="border rounded-md p-4 space-y-3">
 			<div class="flex flex-wrap items-center gap-2">
 				<Badge :theme="passed ? 'green' : lastRun ? 'orange' : 'gray'" size="lg">
 					{{ __(statusLine) }}
@@ -29,7 +32,7 @@
 			</div>
 		</div>
 
-		<div v-if="files.length" class="space-y-3">
+		<div v-if="placement === 'editor' && files.length" class="space-y-3">
 			<div class="flex flex-wrap items-center justify-between gap-3">
 				<TabButtons
 					v-if="files.length > 1"
@@ -135,12 +138,21 @@ interface ExerciseFile {
 	content: string
 }
 
-const props = defineProps<{
-	lessonName: string
-}>()
+const props = withDefaults(
+	defineProps<{
+		lessonName: string
+		placement?: 'status' | 'editor'
+	}>(),
+	{ placement: 'editor' }
+)
+const placement = props.placement
 
+// Cached on the lesson so the status card at the top of the page and the
+// editor at the bottom read one resource: a run posted from the editor
+// refreshes the card without the two ever talking to each other.
 const status = createResource({
 	url: 'lms.lms.tutoring.exercise_status',
+	cache: ['tutoring_exercise_status', props.lessonName],
 	makeParams() {
 		return { lesson: props.lessonName }
 	},
