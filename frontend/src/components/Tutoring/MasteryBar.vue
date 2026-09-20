@@ -1,5 +1,8 @@
 <template>
-	<div class="flex items-center gap-2">
+	<div v-if="!evidence" class="text-p-sm text-ink-gray-5">
+		{{ __('No evidence yet') }}
+	</div>
+	<div v-else class="flex items-center gap-2">
 		<span
 			class="text-p-sm font-medium tabular-nums"
 			:class="masteryTextClass(value)"
@@ -26,5 +29,6 @@ import {
 
 defineProps<{
 	value: number
+	evidence?: number
 }>()
 </script>

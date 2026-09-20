@@ -26,7 +26,7 @@
 					<div class="text-p-sm text-ink-gray-7 leading-4 min-h-8">
 						{{ concept.label }}
 					</div>
-					<MasteryBar :value="concept.p_known" />
+					<MasteryBar :value="concept.p_known" :evidence="concept.evidence_count" />
 				</div>
 			</Tooltip>
 		</div>
@@ -104,7 +104,7 @@ watch(
 const concepts = computed<ConceptRow[]>(() => progress.data?.concepts || [])
 
 const needsWorkCount = computed<number>(
-	() => concepts.value.filter((c) => needsWork(c.p_known)).length
+	() => concepts.value.filter((c) => c.evidence_count && needsWork(c.p_known)).length
 )
 
 const recommended = computed<Recommendation | null>(

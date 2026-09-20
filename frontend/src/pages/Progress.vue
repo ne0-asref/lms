@@ -61,7 +61,7 @@
 							v-for="row in rows"
 							:key="row.concept"
 							class="border-b last:border-b-0"
-							:class="needsWork(row.p_known) ? 'bg-surface-amber-1' : ''"
+							:class="row.evidence_count && needsWork(row.p_known) ? 'bg-surface-amber-1' : ''"
 						>
 							<td class="px-4 py-3 text-p-base text-ink-gray-8">
 								{{ row.label }}
@@ -70,7 +70,7 @@
 								{{ row.track || '-' }}
 							</td>
 							<td class="px-4 py-3 w-56">
-								<MasteryBar :value="row.p_known" />
+								<MasteryBar :value="row.p_known" :evidence="row.evidence_count" />
 							</td>
 							<td class="px-4 py-3 text-p-sm">
 								<router-link
@@ -160,6 +160,7 @@ interface ProgressRow {
 	concept: string
 	label: string
 	track?: string
+	evidence_count?: number
 	p_known: number
 	fix?: FixIt | null
 }
