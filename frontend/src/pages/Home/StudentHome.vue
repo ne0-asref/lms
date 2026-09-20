@@ -1,5 +1,6 @@
 <template>
 	<div>
+		<ContinueStrip />
 		<div class="mt-10 space-y-10">
 			<UpcomingEvaluations :forHome="true" />
 			<div v-if="myLiveClasses.data?.length">
@@ -147,6 +148,7 @@ import { formatTime } from '@/utils'
 import CourseCard from '@/components/CourseCard.vue'
 import BatchCard from '@/pages/Batches/components/BatchCard.vue'
 import UpcomingEvaluations from '@/components/UpcomingEvaluations.vue'
+import ContinueStrip from '@/components/Tutoring/ContinueStrip.vue'
 import { safeUrl } from '@/utils/safeUrl'
 
 const dayjs = inject<any>('$dayjs')

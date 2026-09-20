@@ -37,6 +37,7 @@ declare module 'vue' {
     CommandPalette: typeof import('./src/components/CommandPalette/CommandPalette.vue')['default']
     CommandPaletteGroup: typeof import('./src/components/CommandPalette/CommandPaletteGroup.vue')['default']
     ContactUsEmail: typeof import('./src/components/ContactUsEmail.vue')['default']
+    ContinueStrip: typeof import('./src/components/Tutoring/ContinueStrip.vue')['default']
     CouponDetails: typeof import('./src/components/Settings/Coupons/CouponDetails.vue')['default']
     CouponItems: typeof import('./src/components/Settings/Coupons/CouponItems.vue')['default']
     CouponList: typeof import('./src/components/Settings/Coupons/CouponList.vue')['default']

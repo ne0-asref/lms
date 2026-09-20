@@ -128,3 +128,29 @@ export function lessonRouteParams(
 		lessonNumber: match[2],
 	}
 }
+
+export interface CourseRecommendation {
+	lesson: string
+	title: string
+	chapter_title?: string
+	reason?: string
+}
+
+export interface CourseProgressRow {
+	course: string
+	course_title?: string
+	evidence_count?: number
+	recommendation?: CourseRecommendation | null
+}
+
+/**
+ * Course rows that have somewhere to send the learner back to. The home page
+ * strip only ever shows a row that carries a recommendation, so this is the
+ * one filter both the strip and its tests need to agree on.
+ */
+export function coursesWithRecommendation(
+	courses: CourseProgressRow[] | null | undefined
+): CourseProgressRow[] {
+	if (!Array.isArray(courses)) return []
+	return courses.filter((row) => Boolean(row?.recommendation))
+}

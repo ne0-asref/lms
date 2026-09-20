@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
+	coursesWithRecommendation,
 	firstFailureText,
 	lessonRouteParams,
 	masteryLabel,
@@ -115,5 +116,21 @@ describe('lessonRouteParams', () => {
 		expect(lessonRouteParams('rust-101', '')).toBeNull()
 		expect(lessonRouteParams('', '3-2')).toBeNull()
 		expect(lessonRouteParams('rust-101', null)).toBeNull()
+	})
+})
+
+describe('coursesWithRecommendation', () => {
+	it('keeps only the rows that carry a recommendation', () => {
+		const rows = [
+			{ course: 'rust-101', recommendation: { lesson: '3-2', title: 'Traits' } },
+			{ course: 'rust-201', recommendation: null },
+			{ course: 'rust-301' },
+		]
+		expect(coursesWithRecommendation(rows)).toEqual([rows[0]])
+	})
+
+	it('treats missing or non-array input as no rows', () => {
+		expect(coursesWithRecommendation(null)).toEqual([])
+		expect(coursesWithRecommendation(undefined)).toEqual([])
 	})
 })

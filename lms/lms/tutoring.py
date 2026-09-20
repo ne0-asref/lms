@@ -87,8 +87,19 @@ def learner_progress():
 	                        "concept", "label", "track", "p_known",
 	                        "fix": {"exercise_id", "title", "lesson", "course"} or None,
 	                }, ...],
+	                "courses": [{
+	                        "course", "course_title", "evidence_count",
+	                        "recommendation": {"lesson", "title", "chapter_title", "reason"} or None,
+	                }, ...],
 	                "devices": [{"name", "label", "last_used_at", "revoked"}, ...],
 	        }
+
+	`courses` is one row per course the learner has evidence in, each with at
+	most one `recommendation`, the same shape `course_progress` hands its
+	`recommended` key. It backs the home page "pick up where you left off"
+	strip, which shows only the rows that carry a recommendation. Omitting the
+	key is treated the same as an empty list, so a "rows"-only implementation
+	stays drop-in; the strip just has nothing to show.
 	"""
 	return dict(DISABLED)
 
