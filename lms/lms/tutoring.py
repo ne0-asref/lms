@@ -57,6 +57,7 @@ def exercise_status(lesson=None):
 	        {
 	                "enabled": True,
 	                "exercise_id": str,
+	                "modes": ["hardware", "simulation"] (optional),
 	                "attempts": int,
 	                "hints_used": int,
 	                "last": {
@@ -65,6 +66,10 @@ def exercise_status(lesson=None):
 	                        "first_failure": {"expected", "observed"} or None,
 	                } or None,
 	        }
+
+	`modes` is optional and, when present, lists which ways this exercise may
+	be run. The frontend editor is shown only when "simulation" is in it; an
+	implementation that omits the key is treated as allowing both.
 	"""
 	return dict(DISABLED)
 
@@ -98,12 +103,15 @@ def exercise_files(lesson=None):
 	                "enabled": True,
 	                "exercise_id": str,
 	                "target": str,
+	                "modes": ["hardware", "simulation"] (optional),
 	                "instructions_md": str,
 	                "files": [{"path": str, "content": str}, ...],
 	        }
 
 	An empty `files` list means the exercise is not editable in the browser,
-	and the lesson page shows the status card without an editor.
+	and the lesson page shows the status card without an editor. `modes`, when
+	present and missing "simulation", does the same, and is optional for the
+	same reason as in `exercise_status`.
 	"""
 	return dict(DISABLED)
 

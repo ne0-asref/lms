@@ -1,6 +1,9 @@
 <template>
 	<section
-		v-if="status.data?.enabled && (placement === 'status' || files.length)"
+		v-if="
+			status.data?.enabled &&
+			(placement === 'status' || (files.length && simulationAllowed))
+		"
 		:class="placement === 'status' ? 'mt-6 space-y-4' : 'mt-10 border-t pt-8 space-y-4'"
 	>
 		<h2 class="text-lg-semibold text-ink-gray-9">
@@ -32,7 +35,10 @@
 			</div>
 		</div>
 
-		<div v-if="placement === 'editor' && files.length" class="space-y-3">
+		<div
+			v-if="placement === 'editor' && files.length && simulationAllowed"
+			class="space-y-3"
+		>
 			<div class="flex flex-wrap items-center justify-between gap-3">
 				<TabButtons
 					v-if="files.length > 1"
@@ -199,6 +205,14 @@ watch(
 	},
 	{ immediate: true }
 )
+
+// `modes` is optional, so an older server that has never heard of it must
+// not hide the editor: absent means allowed, same as any other field a
+// server has not started sending yet.
+const simulationAllowed = computed<boolean>(() => {
+	const modes = status.data?.modes
+	return !modes || modes.includes('simulation')
+})
 
 const lastRun = computed<LastRun | null>(() => status.data?.last || null)
 const passed = computed<boolean>(() => runPassed(lastRun.value))
