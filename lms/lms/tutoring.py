@@ -17,6 +17,7 @@ signatures and points these paths at its own functions from its `hooks.py`:
                 "lms.lms.tutoring.exercise_files": "my_app.api.exercise_files",
                 "lms.lms.tutoring.hint": "my_app.api.hint",
                 "lms.lms.tutoring.revoke_device": "my_app.api.revoke_device",
+                "lms.lms.tutoring.delete_device": "my_app.api.delete_device",
                 "lms.lms.tutoring.devices": "my_app.api.devices",
                 "lms.lms.tutoring.bench_share": "my_app.api.bench_share",
                 "lms.lms.tutoring.bench_unshare": "my_app.api.bench_unshare",
@@ -99,7 +100,7 @@ def learner_progress():
 	                        "course", "course_title", "evidence_count",
 	                        "recommendation": {"lesson", "title", "chapter_title", "reason"} or None,
 	                }, ...],
-	                "devices": [{"name", "label", "last_used_at"}, ...],
+	                "devices": [{"name", "label", "last_used_at", "revoked", "delete_at"}, ...],
 	        }
 
 	`courses` is one row per course the learner has evidence in, each with at
@@ -151,9 +152,19 @@ def hint(run=None, files=None):
 def revoke_device(name=None):
 	"""Revoke one of the current learner's paired devices.
 
-	An implementation deletes the token and returns `{"ok": True, "name"}`;
-	it refuses any device that does not belong to the session user. Tokens
-	are removed, not flagged, so the list never grows with dead entries.
+	An implementation marks the token revoked and returns `{"ok": True, "name"}`;
+	it refuses any device that does not belong to the session user. The row
+	stays, with `delete_at` set, until a nightly purge removes it (30 days) or
+	the learner calls delete_device.
+	"""
+	return dict(DISABLED)
+
+
+@frappe.whitelist()
+def delete_device(name=None):
+	"""Delete one of the current learner's paired devices now, revoked or not.
+
+	Returns `{"ok": True, "name"}`; refuses devices of other users.
 	"""
 	return dict(DISABLED)
 
@@ -187,7 +198,7 @@ def devices():
 	                        "status", "sharing": bool, "connected": bool, "connected_at",
 	                        "url": str or None,   # only while connected
 	                }, ...],
-	                "tokens": [{"name", "label", "last_used_at"}, ...],
+	                "tokens": [{"name", "label", "last_used_at", "revoked", "delete_at"}, ...],
 	        }
 
 	"Shared with others" is `mine` filtered on `sharing`.

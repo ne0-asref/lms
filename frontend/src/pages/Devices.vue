@@ -244,7 +244,7 @@
 					{{ __('Machines allowed to post runs as you') }}
 				</h2>
 				<div class="text-p-sm text-ink-gray-5">
-					{{ __('Each one holds a token you approved. Revoke removes it here and the machine has to pair again. Machines unused for 30 days are removed automatically.') }}
+					{{ __('Each one holds a token you approved. Revoke it and the machine has to pair again. Revoked machines are deleted after 30 days, or delete them now.') }}
 				</div>
 				<div v-if="tokens.length" class="border rounded-md divide-y">
 					<div
@@ -257,21 +257,32 @@
 								{{ token.label || token.name }}
 							</div>
 							<div class="text-p-sm text-ink-gray-5">
-								{{
-									token.last_used_at
-										? `${__('Last used')} ${dayjs(token.last_used_at).fromNow()}`
-										: __('Never used')
-								}}
+								{{ tokenNote(token) }}
 							</div>
 						</div>
-						<Button
-							theme="red"
-							variant="subtle"
-							:loading="busy === `revoke:${token.name}`"
-							@click="revoke(token)"
-						>
-							{{ __('Revoke') }}
-						</Button>
+						<div class="flex items-center gap-2">
+							<Badge v-if="token.revoked" theme="gray">
+								{{ __('Revoked') }}
+							</Badge>
+							<Button
+								v-if="token.revoked"
+								theme="red"
+								variant="subtle"
+								:loading="busy === `delete:${token.name}`"
+								@click="deleteNow(token)"
+							>
+								{{ __('Delete now') }}
+							</Button>
+							<Button
+								v-else
+								theme="red"
+								variant="subtle"
+								:loading="busy === `revoke:${token.name}`"
+								@click="revoke(token)"
+							>
+								{{ __('Revoke') }}
+							</Button>
+						</div>
 					</div>
 				</div>
 				<div v-else class="text-p-base text-ink-gray-5">
@@ -316,6 +327,8 @@ interface Token {
 	name: string
 	label?: string
 	last_used_at?: string
+	revoked?: boolean
+	delete_at?: string
 }
 
 const { brand } = sessionStore() as { brand: { favicon?: string } }
@@ -400,6 +413,20 @@ const forget = (bench: UsingRow) =>
 	act(`forget:${bench.name}`, 'bench_forget', { bench: bench.name }, __('Could not forget that bench.'))
 const revoke = (token: Token) =>
 	act(`revoke:${token.name}`, 'revoke_device', { name: token.name }, __('Could not revoke that device.'))
+const deleteNow = (token: Token) =>
+	act(`delete:${token.name}`, 'delete_device', { name: token.name }, __('Could not delete that device.'))
+
+// Active: when it last posted. Revoked: how long until the row is deleted.
+const tokenNote = (token: Token) => {
+	if (token.revoked) {
+		return token.delete_at
+			? `${__('Deleted')} ${dayjs(token.delete_at).fromNow()}`
+			: __('Deleted soon')
+	}
+	return token.last_used_at
+		? `${__('Last used')} ${dayjs(token.last_used_at).fromNow()}`
+		: __('Never used')
+}
 
 const breadcrumbs = computed(() => [
 	{
