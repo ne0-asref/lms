@@ -90,62 +90,24 @@
 				{{ __('No concepts recorded yet. Work through a lesson to start one.') }}
 			</div>
 
-			<section class="space-y-3">
-				<h2 class="text-lg-semibold text-ink-gray-9">{{ __('Devices') }}</h2>
-				<div v-if="devices.length" class="border rounded-md divide-y">
-					<div
-						v-for="device in devices"
-						:key="device.name"
-						class="flex flex-wrap items-center justify-between gap-3 px-4 py-3"
-					>
-						<div>
-							<div class="text-p-base text-ink-gray-8">
-								{{ device.label || device.name }}
-							</div>
-							<div class="text-p-sm text-ink-gray-5">
-								{{
-									device.last_used_at
-										? `${__('Last used')} ${dayjs(device.last_used_at).fromNow()}`
-										: __('Never used')
-								}}
-							</div>
-						</div>
-						<Badge v-if="device.revoked" theme="gray">
-							{{ __('Revoked') }}
-						</Badge>
-						<Button
-							v-else
-							theme="red"
-							variant="subtle"
-							:loading="revoking === device.name"
-							@click="revoke(device)"
-						>
-							{{ __('Revoke') }}
-						</Button>
-					</div>
-				</div>
-				<div v-else class="text-p-base text-ink-gray-5">
-					{{ __('No devices paired with this account.') }}
-				</div>
-			</section>
+			<div class="text-p-sm text-ink-gray-5">
+				{{ __('Benches and paired machines live under') }}
+				<router-link
+					:to="{ name: 'Devices' }"
+					class="text-ink-gray-8 underline underline-offset-2 hover:text-ink-gray-9"
+				>
+					{{ __('Devices') }}
+				</router-link>
+			</div>
 		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import {
-	Badge,
-	Button,
-	LoadingIndicator,
-	call,
-	createResource,
-	toast,
-	usePageMeta,
-} from 'frappe-ui'
+import { computed } from 'vue'
+import { LoadingIndicator, createResource, usePageMeta } from 'frappe-ui'
 import PageHeader from '@/components/Layouts/PageHeader.vue'
 import MasteryBar from '@/components/Tutoring/MasteryBar.vue'
-import dayjs from '@/utils/dayjs'
 import { lessonRouteParams, needsWork } from '@/utils/tutoring'
 import { sessionStore } from '@/stores/session'
 
@@ -165,15 +127,7 @@ interface ProgressRow {
 	fix?: FixIt | null
 }
 
-interface Device {
-	name: string
-	label?: string
-	last_used_at?: string
-	revoked?: boolean
-}
-
 const { brand } = sessionStore() as { brand: { favicon?: string } }
-const revoking = ref('')
 
 // Answers {enabled: false} wherever no tutoring app is installed, and the page
 // says so rather than showing an empty table.
@@ -187,7 +141,6 @@ const summary = computed(
 )
 
 const rows = computed<ProgressRow[]>(() => progress.data?.rows || [])
-const devices = computed<Device[]>(() => progress.data?.devices || [])
 
 const columns = computed(() => [
 	__('Concept'),
@@ -201,18 +154,6 @@ const fixRoute = (row: ProgressRow) => {
 	const params = lessonRouteParams(row.fix.course, row.fix.lesson)
 	if (!params) return null
 	return { name: 'Lesson', params }
-}
-
-const revoke = async (device: Device) => {
-	revoking.value = device.name
-	try {
-		await call('lms.lms.tutoring.revoke_device', { name: device.name })
-		progress.reload()
-	} catch (error) {
-		toast.error(__('Could not revoke that device.'))
-	} finally {
-		revoking.value = ''
-	}
 }
 
 const breadcrumbs = computed(() => [

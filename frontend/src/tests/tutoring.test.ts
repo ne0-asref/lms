@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import {
+	benchStatus,
+	benchStatusTheme,
+	normaliseShareCode,
+	sharedBenches,
 	coursesWithRecommendation,
 	firstFailureText,
 	lessonRouteParams,
@@ -132,5 +136,33 @@ describe('coursesWithRecommendation', () => {
 	it('treats missing or non-array input as no rows', () => {
 		expect(coursesWithRecommendation(null)).toEqual([])
 		expect(coursesWithRecommendation(undefined)).toEqual([])
+	})
+})
+
+describe('devices page helpers', () => {
+	it('normalises bench status to the three the page draws', () => {
+		expect(benchStatus('available')).toBe('available')
+		expect(benchStatus('busy')).toBe('busy')
+		expect(benchStatus(null)).toBe('offline')
+		expect(benchStatus('anything else')).toBe('offline')
+		expect(benchStatusTheme('available')).toBe('green')
+		expect(benchStatusTheme('busy')).toBe('orange')
+		expect(benchStatusTheme(undefined)).toBe('gray')
+	})
+
+	it('shared benches are the ones with sharing on', () => {
+		const mine = [
+			{ name: 'a', sharing: true },
+			{ name: 'b', sharing: false },
+			{ name: 'c' },
+		]
+		expect(sharedBenches(mine).map((r) => r.name)).toEqual(['a'])
+		expect(sharedBenches(null)).toEqual([])
+	})
+
+	it('share codes are forgiving about how they were typed', () => {
+		expect(normaliseShareCode('wxyz1234')).toBe('WXYZ-1234')
+		expect(normaliseShareCode(' wxyz-1234 ')).toBe('WXYZ-1234')
+		expect(normaliseShareCode('wx')).toBe('WX')
 	})
 })

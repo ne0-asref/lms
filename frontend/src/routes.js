@@ -166,6 +166,13 @@ export const routes = [
 		component: () => import('@/pages/Progress.vue'),
 	},
 	{
+		// Benches the learner owns, shares or drives, and the machines that may
+		// post runs as them. Same optional-endpoint rule as /progress.
+		path: '/devices',
+		name: 'Devices',
+		component: () => import('@/pages/Devices.vue'),
+	},
+	{
 		path: '/statistics',
 		name: 'Statistics',
 		component: () => import('@/pages/Statistics.vue'),

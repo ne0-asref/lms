@@ -154,3 +154,50 @@ export function coursesWithRecommendation(
 	if (!Array.isArray(courses)) return []
 	return courses.filter((row) => Boolean(row?.recommendation))
 }
+
+// --- Devices page -----------------------------------------------------------
+
+export type BenchStatus = 'available' | 'busy' | 'offline'
+
+export interface BenchRow {
+	name: string
+	label?: string
+	board?: string
+	url?: string | null
+	status?: string | null
+	last_seen?: string | null
+	sharing?: boolean
+	share_code?: string | null
+	connected?: string[] | boolean
+}
+
+/** Server status normalised to the three the page knows how to draw. */
+export function benchStatus(status: unknown): BenchStatus {
+	if (status === 'available' || status === 'busy') return status
+	return 'offline'
+}
+
+/** Badge theme per status: green available, orange busy, gray offline. */
+export function benchStatusTheme(status: unknown): 'green' | 'orange' | 'gray' {
+	const s = benchStatus(status)
+	if (s === 'available') return 'green'
+	if (s === 'busy') return 'orange'
+	return 'gray'
+}
+
+/** The "Shared with others" list: my benches with sharing on. */
+export function sharedBenches<T extends { sharing?: boolean }>(
+	mine: T[] | null | undefined
+): T[] {
+	if (!Array.isArray(mine)) return []
+	return mine.filter((row) => Boolean(row?.sharing))
+}
+
+/** Share codes are typed by hand; keep letters, digits and one dash. */
+export function normaliseShareCode(raw: unknown): string {
+	const cleaned = String(raw ?? '')
+		.toUpperCase()
+		.replace(/[^A-Z0-9]/g, '')
+	if (cleaned.length !== 8) return cleaned
+	return `${cleaned.slice(0, 4)}-${cleaned.slice(4)}`
+}

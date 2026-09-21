@@ -575,6 +575,15 @@ const getSidebarItems = (forMobile = false) => {
 					},
 				},
 				{
+					label: 'Devices',
+					icon: 'Cpu',
+					to: 'Devices',
+					activeFor: ['Devices'],
+					condition: () => {
+						return userResource?.data
+					},
+				},
+				{
 					label: 'Certifications',
 					icon: 'GraduationCap',
 					to: 'CertifiedParticipants',

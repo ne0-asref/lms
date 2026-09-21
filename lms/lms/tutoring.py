@@ -17,6 +17,14 @@ signatures and points these paths at its own functions from its `hooks.py`:
                 "lms.lms.tutoring.exercise_files": "my_app.api.exercise_files",
                 "lms.lms.tutoring.hint": "my_app.api.hint",
                 "lms.lms.tutoring.revoke_device": "my_app.api.revoke_device",
+                "lms.lms.tutoring.devices": "my_app.api.devices",
+                "lms.lms.tutoring.bench_share": "my_app.api.bench_share",
+                "lms.lms.tutoring.bench_unshare": "my_app.api.bench_unshare",
+                "lms.lms.tutoring.bench_connect": "my_app.api.bench_connect",
+                "lms.lms.tutoring.bench_reconnect": "my_app.api.bench_reconnect",
+                "lms.lms.tutoring.bench_disconnect": "my_app.api.bench_disconnect",
+                "lms.lms.tutoring.bench_forget": "my_app.api.bench_forget",
+                "lms.lms.tutoring.bench_remove": "my_app.api.bench_remove",
         }
 
 The override applies to requests routed through `/api/method/...`, which is how
@@ -146,4 +154,83 @@ def revoke_device(name=None):
 	An implementation returns `{"enabled": True, "revoked": True}` and refuses
 	any device that does not belong to the session user.
 	"""
+	return dict(DISABLED)
+
+
+# --- Devices page -----------------------------------------------------------
+#
+# A "bench" is a development board served over the network by a learner's own
+# tooling. The page lists the benches the learner owns, the ones they share,
+# and the ones they connected to with a share code, plus the machines allowed
+# to post exercise runs as them. All of it is optional; the page explains
+# itself when `devices` answers "not enabled".
+
+
+@frappe.whitelist()
+def devices():
+	"""Everything the Devices page shows for the current learner.
+
+	An implementation returns::
+
+	        {
+	                "enabled": True,
+	                "heartbeat_ttl": int,   # seconds without a heartbeat before "offline"
+	                "mine": [{
+	                        "name", "label", "board", "url",
+	                        "status": "available" | "busy" | "offline",
+	                        "last_seen", "sharing": bool, "share_code": str or None,
+	                        "connected": [display names of learners connected now],
+	                }, ...],
+	                "using": [{
+	                        "name", "label", "board", "owner_name", "own": bool,
+	                        "status", "sharing": bool, "connected": bool, "connected_at",
+	                        "url": str or None,   # only while connected
+	                }, ...],
+	                "tokens": [{"name", "label", "last_used_at", "revoked"}, ...],
+	        }
+
+	"Shared with others" is `mine` filtered on `sharing`.
+	"""
+	return dict(DISABLED)
+
+
+@frappe.whitelist(methods=["POST"])
+def bench_share(bench=None):
+	"""Owner turns sharing on. Returns `{"ok": True, "share_code": "WXYZ-1234"}`."""
+	return dict(DISABLED)
+
+
+@frappe.whitelist(methods=["POST"])
+def bench_unshare(bench=None):
+	"""Owner's kill switch: sharing off, code void, every driver dropped."""
+	return dict(DISABLED)
+
+
+@frappe.whitelist(methods=["POST"])
+def bench_connect(code=None):
+	"""Enter a share code. Adds the bench to `using` and connects."""
+	return dict(DISABLED)
+
+
+@frappe.whitelist(methods=["POST"])
+def bench_reconnect(bench=None):
+	"""Connect again to a bench already in `using`, without the code."""
+	return dict(DISABLED)
+
+
+@frappe.whitelist(methods=["POST"])
+def bench_disconnect(bench=None):
+	"""Drop my session on a bench; it stays in `using`."""
+	return dict(DISABLED)
+
+
+@frappe.whitelist(methods=["POST"])
+def bench_forget(bench=None):
+	"""Remove a bench from `using`."""
+	return dict(DISABLED)
+
+
+@frappe.whitelist(methods=["POST"])
+def bench_remove(bench=None):
+	"""Owner deletes a bench and every share on it."""
 	return dict(DISABLED)
