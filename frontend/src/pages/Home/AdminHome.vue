@@ -1,5 +1,7 @@
 <template>
 	<div>
+		<!-- Moderators and instructors learn too; their own next step sits above the teaching lists, as it does on the student home. -->
+		<ContinueStrip />
 		<div class="mt-10 space-y-10">
 			<div v-if="evals?.data?.length">
 				<div class="text-lg-semibold text-ink-gray-9 mb-3">
@@ -214,6 +216,7 @@ import { formatTime } from '@/utils'
 import { formatTimezone } from '@/utils/timezone'
 import { profileRoute } from '@/utils/routes'
 import CourseCard from '@/components/CourseCard.vue'
+import ContinueStrip from '@/components/Tutoring/ContinueStrip.vue'
 import BatchCard from '@/pages/Batches/components/BatchCard.vue'
 import { safeUrl } from '@/utils/safeUrl'
 
