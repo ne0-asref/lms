@@ -244,7 +244,7 @@
 					{{ __('Machines allowed to post runs as you') }}
 				</h2>
 				<div class="text-p-sm text-ink-gray-5">
-					{{ __('Each one holds a token you approved. Revoke it and the machine has to pair again.') }}
+					{{ __('Each one holds a token you approved. Revoke removes it here and the machine has to pair again. Machines unused for 30 days are removed automatically.') }}
 				</div>
 				<div v-if="tokens.length" class="border rounded-md divide-y">
 					<div
@@ -264,11 +264,7 @@
 								}}
 							</div>
 						</div>
-						<Badge v-if="token.revoked" theme="gray">
-							{{ __('Revoked') }}
-						</Badge>
 						<Button
-							v-else
 							theme="red"
 							variant="subtle"
 							:loading="busy === `revoke:${token.name}`"
@@ -320,7 +316,6 @@ interface Token {
 	name: string
 	label?: string
 	last_used_at?: string
-	revoked?: boolean
 }
 
 const { brand } = sessionStore() as { brand: { favicon?: string } }

@@ -99,7 +99,7 @@ def learner_progress():
 	                        "course", "course_title", "evidence_count",
 	                        "recommendation": {"lesson", "title", "chapter_title", "reason"} or None,
 	                }, ...],
-	                "devices": [{"name", "label", "last_used_at", "revoked"}, ...],
+	                "devices": [{"name", "label", "last_used_at"}, ...],
 	        }
 
 	`courses` is one row per course the learner has evidence in, each with at
@@ -151,8 +151,9 @@ def hint(run=None, files=None):
 def revoke_device(name=None):
 	"""Revoke one of the current learner's paired devices.
 
-	An implementation returns `{"enabled": True, "revoked": True}` and refuses
-	any device that does not belong to the session user.
+	An implementation deletes the token and returns `{"ok": True, "name"}`;
+	it refuses any device that does not belong to the session user. Tokens
+	are removed, not flagged, so the list never grows with dead entries.
 	"""
 	return dict(DISABLED)
 
@@ -186,7 +187,7 @@ def devices():
 	                        "status", "sharing": bool, "connected": bool, "connected_at",
 	                        "url": str or None,   # only while connected
 	                }, ...],
-	                "tokens": [{"name", "label", "last_used_at", "revoked"}, ...],
+	                "tokens": [{"name", "label", "last_used_at"}, ...],
 	        }
 
 	"Shared with others" is `mine` filtered on `sharing`.
