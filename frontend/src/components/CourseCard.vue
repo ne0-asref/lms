@@ -94,9 +94,10 @@
 				{{ course.short_introduction }}
 			</div>
 
-			<!-- The slot is always the same height, enrolled or not, so the
-			     footer sits in the same place on every card. -->
-			<div v-if="user" class="min-h-9 mb-4">
+			<!-- The slot is always the same height, enrolled or not, and hangs
+			     off the bottom with the footer: a card with no image has no
+			     title block here, so anchoring from the top would move the bar. -->
+			<div v-if="user" class="h-9 mt-auto mb-4">
 				<template v-if="course.membership">
 					<ProgressBar :progress="course.membership.progress" />
 					<div class="text-sm mt-2">
@@ -105,7 +106,7 @@
 				</template>
 			</div>
 
-			<div class="flex items-center justify-between mt-auto">
+			<div class="flex items-center justify-between" :class="{ 'mt-auto': !user }">
 				<div class="flex avatar-group overlap">
 					<div
 						class="h-6 me-1"
