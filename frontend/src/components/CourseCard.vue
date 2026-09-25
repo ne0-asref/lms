@@ -48,7 +48,7 @@
 			</div>
 		</div>
 		<div class="flex flex-col flex-auto p-4 border-x-2 border-b-2 rounded-b-md">
-			<div class="flex items-center justify-between mb-2">
+			<div class="flex items-center gap-x-4 mb-2 h-5">
 				<div v-if="course.lessons">
 					<Tooltip :text="__('Lessons')">
 						<span class="flex items-center">
@@ -78,14 +78,14 @@
 					</Tooltip>
 				</div>
 
-				<Tooltip v-if="course.featured" :text="__('Featured')">
+				<Tooltip v-if="course.featured" :text="__('Featured')" class="ms-auto">
 					<span class="lucide-award size-4 text-ink-amber-6" />
 				</Tooltip>
 			</div>
 
 			<div
 				v-if="course.image"
-				class="font-semibold leading-6 text-lg"
+				class="font-semibold leading-6 text-lg min-h-12 line-clamp-2"
 			>
 				{{ course.title }}
 			</div>
@@ -94,13 +94,15 @@
 				{{ course.short_introduction }}
 			</div>
 
-			<ProgressBar
-				v-if="user && course.membership"
-				:progress="course.membership.progress"
-			/>
-
-			<div v-if="user && course.membership" class="text-sm mt-2 mb-4">
-				{{ Math.ceil(course.membership.progress) }}% {{ __('completed') }}
+			<!-- The slot is always the same height, enrolled or not, so the
+			     footer sits in the same place on every card. -->
+			<div v-if="user" class="min-h-9 mb-4">
+				<template v-if="course.membership">
+					<ProgressBar :progress="course.membership.progress" />
+					<div class="text-sm mt-2">
+						{{ Math.ceil(course.membership.progress) }}% {{ __('completed') }}
+					</div>
+				</template>
 			</div>
 
 			<div class="flex items-center justify-between mt-auto">
@@ -194,5 +196,6 @@ const gradientColor = computed(() => {
 	overflow: hidden;
 	margin: 0.25rem 0 1.25rem;
 	line-height: 1.5;
+	min-height: 2.625rem;
 }
 </style>
