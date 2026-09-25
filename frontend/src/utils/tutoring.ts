@@ -201,3 +201,24 @@ export function normaliseShareCode(raw: unknown): string {
 	if (cleaned.length !== 8) return cleaned
 	return `${cleaned.slice(0, 4)}-${cleaned.slice(4)}`
 }
+
+// --- Lesson concept card ----------------------------------------------------
+
+export interface LessonConceptRow {
+	id: string
+	label: string
+	p_known: number
+	evidence_count?: number
+}
+
+// The card heading says what the concepts are to this page: what a content
+// lesson teaches, or what a checkpoint quiz tests.
+export function lessonConceptsHeading(source: unknown): string {
+	return source === 'quiz' ? 'This checkpoint tests' : 'Concepts in this lesson'
+}
+
+// Concepts with evidence that still sit below the mastery threshold.
+export function needsWorkCount(rows: LessonConceptRow[] | null | undefined): number {
+	if (!Array.isArray(rows)) return 0
+	return rows.filter((r) => Boolean(r?.evidence_count) && needsWork(r.p_known)).length
+}

@@ -20,8 +20,8 @@
 				</span>
 			</div>
 
-			<div class="flex flex-wrap gap-x-8 gap-y-2">
-				<div v-for="fact in facts" :key="fact.label" class="min-w-24">
+			<div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+				<div v-for="fact in facts" :key="fact.label">
 					<div class="text-p-xs text-ink-gray-5">{{ fact.label }}</div>
 					<div class="text-p-sm text-ink-gray-8">{{ fact.value }}</div>
 				</div>

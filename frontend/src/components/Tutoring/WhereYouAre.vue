@@ -22,8 +22,8 @@
 				:text="evidenceText(concept)"
 				:hoverDelay="0.3"
 			>
-				<div class="border rounded-md p-3 space-y-2 h-full">
-					<div class="text-p-sm text-ink-gray-7 leading-4 min-h-8">
+				<div class="border rounded-md p-3 h-full flex flex-col justify-between gap-3">
+					<div class="text-p-sm text-ink-gray-8 leading-5 min-h-10 line-clamp-2">
 						{{ concept.label }}
 					</div>
 					<MasteryBar :value="concept.p_known" :evidence="concept.evidence_count" />

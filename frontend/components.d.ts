@@ -88,6 +88,7 @@ declare module 'vue' {
     InviteIcon: typeof import('./src/components/Icons/InviteIcon.vue')['default']
     JobApplicationModal: typeof import('./src/components/Modals/JobApplicationModal.vue')['default']
     JobCard: typeof import('./src/components/JobCard.vue')['default']
+    LessonConcepts: typeof import('./src/components/Tutoring/LessonConcepts.vue')['default']
     LessonContent: typeof import('./src/components/LessonContent.vue')['default']
     LessonHelp: typeof import('./src/components/LessonHelp.vue')['default']
     Link: typeof import('./src/components/Controls/Link.vue')['default']

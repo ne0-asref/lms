@@ -12,6 +12,7 @@ signatures and points these paths at its own functions from its `hooks.py`:
 
         override_whitelisted_methods = {
                 "lms.lms.tutoring.course_progress": "my_app.api.course_progress",
+                "lms.lms.tutoring.lesson_concepts": "my_app.api.lesson_concepts",
                 "lms.lms.tutoring.exercise_status": "my_app.api.exercise_status",
                 "lms.lms.tutoring.learner_progress": "my_app.api.learner_progress",
                 "lms.lms.tutoring.exercise_files": "my_app.api.exercise_files",
@@ -53,6 +54,24 @@ def course_progress(course=None):
 
 	`p_known` is a float from 0 to 1. `lesson` is the route the Start button
 	sends the learner to, as "<chapter number>-<lesson number>".
+	"""
+	return dict(DISABLED)
+
+
+@frappe.whitelist()
+def lesson_concepts(lesson=None):
+	"""The concepts one lesson teaches or, on a checkpoint lesson, tests.
+
+	An implementation returns::
+
+	        {
+	                "enabled": True,
+	                "source": "lesson" or "quiz",
+	                "concepts": [{"id", "label", "p_known", "evidence_count"}, ...],
+	        }
+
+	`p_known` is a float from 0 to 1. A lesson that neither tags nor tests a
+	concept answers `{"enabled": False}` and the card stays off the page.
 	"""
 	return dict(DISABLED)
 

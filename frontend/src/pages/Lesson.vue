@@ -222,6 +222,11 @@
 								</router-link>
 							</div>
 						</div>
+						<LessonConcepts
+							v-if="lesson.data?.name"
+							:key="`concepts-${lesson.data.name}`"
+							:lessonName="lesson.data.name"
+						/>
 						<ExercisePanel
 							v-if="lesson.data?.name"
 							placement="status"
@@ -436,6 +441,7 @@ import UserAvatar from '@/components/UserAvatar.vue'
 import Notes from '@/components/Notes/Notes.vue'
 import InlineLessonMenu from '@/components/Notes/InlineLessonMenu.vue'
 import ExercisePanel from '@/components/Tutoring/ExercisePanel.vue'
+import LessonConcepts from '@/components/Tutoring/LessonConcepts.vue'
 import { getLmsRoute } from '@/utils/basePath'
 import { provideStudentView } from '@/composables/useStudentView'
 
