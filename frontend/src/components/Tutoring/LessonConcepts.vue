@@ -1,45 +1,57 @@
 <template>
-	<section v-if="concepts.data?.enabled && rows.length" class="mt-6 space-y-3">
-		<div class="flex items-center gap-2">
-			<h2 class="text-lg-semibold text-ink-gray-9">
-				{{ __(heading) }}
-			</h2>
-			<Badge v-if="needWork" theme="orange" size="sm">
-				{{ needWork }} {{ __('need work') }}
-			</Badge>
-		</div>
-
-		<div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+	<section
+		v-if="concepts.data?.enabled && rows.length"
+		class="mt-4 border rounded-md px-4 py-2.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-p-sm"
+	>
+		<span class="font-medium text-ink-gray-9">{{ __(heading) }}:</span>
+		<span class="flex flex-wrap items-center gap-x-2 gap-y-1">
 			<Tooltip
 				v-for="concept in rows"
 				:key="concept.id"
-				:text="evidenceText(concept)"
+				:text="masteryText(concept)"
 				:hoverDelay="0.3"
 			>
-				<div class="border rounded-md p-3 h-full flex flex-col justify-between gap-3">
-					<div class="text-p-sm text-ink-gray-8 leading-5 min-h-10 line-clamp-2">
-						{{ concept.label }}
-					</div>
-					<MasteryBar :value="concept.p_known" :evidence="concept.evidence_count" />
-				</div>
+				<span
+					:class="
+						concept.evidence_count && needsWork(concept.p_known)
+							? 'text-ink-amber-3'
+							: 'text-ink-gray-7'
+					"
+				>
+					{{ concept.label }}
+				</span>
 			</Tooltip>
-		</div>
+		</span>
+		<Badge v-if="needWork" theme="orange" size="sm">
+			{{ needWork }} {{ __('need work') }}
+		</Badge>
+		<router-link
+			:to="{ name: 'Progress', query: { course: courseName } }"
+			class="ms-auto text-ink-gray-6 underline underline-offset-2 hover:text-ink-gray-9"
+		>
+			{{ __('My Progress') }}
+		</router-link>
 	</section>
 </template>
 
 <script setup lang="ts">
 import { computed, watch } from 'vue'
 import { Badge, Tooltip, createResource } from 'frappe-ui'
-import MasteryBar from '@/components/Tutoring/MasteryBar.vue'
-import { lessonConceptsHeading, needsWorkCount } from '@/utils/tutoring'
+import {
+	lessonConceptsHeading,
+	masteryLabel,
+	needsWork,
+	needsWorkCount,
+} from '@/utils/tutoring'
 import type { LessonConceptRow } from '@/utils/tutoring'
 
 const props = defineProps<{
 	lessonName: string
+	courseName: string
 }>()
 
 // Answers {enabled: false} on a site with no tutoring app, or on a lesson
-// that neither tags nor tests a concept; the card stays off the page.
+// that neither tags nor tests a concept; the line stays off the page.
 const concepts = createResource({
 	url: 'lms.lms.tutoring.lesson_concepts',
 	makeParams() {
@@ -60,9 +72,11 @@ const rows = computed<LessonConceptRow[]>(() => concepts.data?.concepts || [])
 const heading = computed<string>(() => lessonConceptsHeading(concepts.data?.source))
 const needWork = computed<number>(() => needsWorkCount(rows.value))
 
-const evidenceText = (concept: LessonConceptRow): string => {
+const masteryText = (concept: LessonConceptRow): string => {
 	const count = concept.evidence_count || 0
 	if (!count) return __('No evidence yet')
-	return `${count} ${count === 1 ? __('piece of evidence') : __('pieces of evidence')}`
+	return `${masteryLabel(concept.p_known)}, ${count} ${
+		count === 1 ? __('piece of evidence') : __('pieces of evidence')
+	}`
 }
 </script>

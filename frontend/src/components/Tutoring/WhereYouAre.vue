@@ -1,91 +1,48 @@
 <template>
 	<section
 		v-if="progress.data?.enabled"
-		class="border rounded-md p-4 md:p-5 space-y-4"
+		class="border rounded-md px-4 py-3 flex flex-col md:flex-row md:items-center justify-between gap-3"
 	>
-		<div class="flex items-center gap-2">
-			<h2 class="text-lg-semibold text-ink-gray-9">
-				{{ __('Where you are') }}
-			</h2>
-			<Badge v-if="needsWorkCount" theme="orange" size="sm">
-				{{ needsWorkCount }} {{ __('need work') }}
-			</Badge>
+		<div class="text-p-base text-ink-gray-8 leading-6">
+			<span class="font-semibold text-ink-gray-9">{{ __('Where you are') }}: </span>
+			<span>{{ summaryText }}</span>
+			<template v-if="recommended">
+				<span>. {{ __('Recommended next') }}: </span>
+				<span class="font-semibold text-ink-gray-9">{{ recommendedLabel }}</span>
+			</template>
 		</div>
-
-		<div
-			v-if="concepts.length"
-			class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3"
-		>
-			<Tooltip
-				v-for="concept in concepts"
-				:key="concept.id"
-				:text="evidenceText(concept)"
-				:hoverDelay="0.3"
+		<div class="flex items-center gap-3 shrink-0">
+			<router-link
+				:to="{ name: 'Progress', query: { course: courseName } }"
+				class="text-p-sm text-ink-gray-6 underline underline-offset-2 hover:text-ink-gray-9"
 			>
-				<div class="border rounded-md p-3 h-full flex flex-col justify-between gap-3">
-					<div class="text-p-sm text-ink-gray-8 leading-5 min-h-10 line-clamp-2">
-						{{ concept.label }}
-					</div>
-					<MasteryBar :value="concept.p_known" :evidence="concept.evidence_count" />
-				</div>
-			</Tooltip>
-		</div>
-		<div v-else class="text-p-sm text-ink-gray-5">
-			{{ __('No concepts recorded for this course yet.') }}
-		</div>
-
-		<div
-			v-if="recommended"
-			class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-t pt-4"
-		>
-			<div class="text-p-base text-ink-gray-8">
-				<span>{{ __('Recommended next') }}: </span>
-				<span class="font-semibold text-ink-gray-9">{{
-					recommendedLabel
-				}}</span>
-				<span v-if="recommended.reason" class="text-ink-gray-6">
-					. {{ recommended.reason }}
-				</span>
-			</div>
+				{{ __('My Progress') }}
+			</router-link>
 			<router-link v-if="recommendedRoute" :to="recommendedRoute">
 				<Button variant="solid">
 					{{ __('Start') }}
 				</Button>
 			</router-link>
 		</div>
-
-		<div class="text-p-sm text-ink-gray-5">
-			{{ __('This is advisory. Every lesson stays open.') }}
-		</div>
 	</section>
 </template>
 
 <script setup lang="ts">
 import { computed, watch } from 'vue'
-import { Badge, Button, Tooltip, createResource } from 'frappe-ui'
-import MasteryBar from '@/components/Tutoring/MasteryBar.vue'
-import { lessonRouteParams, needsWork } from '@/utils/tutoring'
-
-interface ConceptRow {
-	id: string
-	label: string
-	p_known: number
-	evidence_count?: number
-}
-
-interface Recommendation {
-	lesson: string
-	title: string
-	chapter_title?: string
-	reason?: string
-}
+import { Button, createResource } from 'frappe-ui'
+import {
+	lessonRouteParams,
+	masterySummary,
+	masterySummaryText,
+} from '@/utils/tutoring'
+import type { CourseRecommendation, LessonConceptRow } from '@/utils/tutoring'
 
 const props = defineProps<{
 	courseName: string
 }>()
 
 // Answers {enabled: false} on a site with no tutoring app installed, and the
-// whole strip stays out of the page.
+// whole line stays out of the page. The tiles themselves live on My Progress.
 const progress = createResource({
 	url: 'lms.lms.tutoring.course_progress',
 	makeParams() {
@@ -102,13 +59,13 @@ watch(
 	{ immediate: true }
 )
 
-const concepts = computed<ConceptRow[]>(() => progress.data?.concepts || [])
+const concepts = computed<LessonConceptRow[]>(() => progress.data?.concepts || [])
 
-const needsWorkCount = computed<number>(
-	() => concepts.value.filter((c) => c.evidence_count && needsWork(c.p_known)).length
+const summaryText = computed<string>(() =>
+	masterySummaryText(masterySummary(concepts.value))
 )
 
-const recommended = computed<Recommendation | null>(
+const recommended = computed<CourseRecommendation | null>(
 	() => progress.data?.recommended || null
 )
 
@@ -127,10 +84,4 @@ const recommendedRoute = computed(() => {
 	if (!params) return null
 	return { name: 'Lesson', params }
 })
-
-const evidenceText = (concept: ConceptRow): string => {
-	const count = concept.evidence_count || 0
-	if (!count) return __('No evidence yet')
-	return `${count} ${count === 1 ? __('piece of evidence') : __('pieces of evidence')}`
-}
 </script>

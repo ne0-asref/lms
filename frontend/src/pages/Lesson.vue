@@ -226,6 +226,7 @@
 							v-if="lesson.data?.name"
 							:key="`concepts-${lesson.data.name}`"
 							:lessonName="lesson.data.name"
+							:courseName="courseName"
 						/>
 						<ExercisePanel
 							v-if="lesson.data?.name"

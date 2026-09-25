@@ -4,35 +4,28 @@
 			status.data?.enabled &&
 			(placement === 'status' || (files.length && simulationAllowed))
 		"
-		:class="placement === 'status' ? 'mt-6 space-y-4' : 'mt-10 border-t pt-8 space-y-4'"
+		:class="placement === 'status' ? 'mt-3' : 'mt-10 border-t pt-8 space-y-4'"
 	>
-		<h2 class="text-lg-semibold text-ink-gray-9">
-			{{ placement === 'status' ? __('Exercise status') : __('Try it here') }}
+		<h2 v-if="placement === 'editor'" class="text-lg-semibold text-ink-gray-9">
+			{{ __('Try it here') }}
 		</h2>
 
-		<div v-if="placement === 'status'" class="border rounded-md p-4 space-y-3">
-			<div class="flex flex-wrap items-center gap-2">
-				<Badge :theme="passed ? 'green' : lastRun ? 'orange' : 'gray'" size="lg">
-					{{ __(statusLine) }}
-				</Badge>
-				<span v-if="receivedAgo" class="text-p-sm text-ink-gray-5">
-					{{ receivedAgo }}
-				</span>
-			</div>
-
-			<div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-				<div v-for="fact in facts" :key="fact.label">
-					<div class="text-p-xs text-ink-gray-5">{{ fact.label }}</div>
-					<div class="text-p-sm text-ink-gray-8">{{ fact.value }}</div>
-				</div>
-			</div>
-
-			<div
-				v-if="lastFailureText"
-				class="text-p-sm text-ink-gray-7 bg-surface-gray-1 rounded-md p-3"
-			>
-				{{ lastFailureText }}
-			</div>
+		<!-- One line: the status badge, the counts, and when the last run came in.
+		     A failing run's first failure is already in the badge text. -->
+		<div
+			v-if="placement === 'status'"
+			class="border rounded-md px-4 py-2.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-p-sm"
+		>
+			<span class="font-medium text-ink-gray-9">{{ __('Exercise status') }}:</span>
+			<Badge :theme="passed ? 'green' : lastRun ? 'orange' : 'gray'" size="sm">
+				{{ __(statusLine) }}
+			</Badge>
+			<span v-for="fact in facts" :key="fact" class="text-ink-gray-6">
+				{{ fact }}
+			</span>
+			<span v-if="receivedAgo" class="text-ink-gray-5">
+				{{ receivedAgo }}
+			</span>
 		</div>
 
 		<div
@@ -131,7 +124,7 @@ import { computed, ref, watch } from 'vue'
 import { Badge, Button, TabButtons, call, createResource } from 'frappe-ui'
 import dayjs from '@/utils/dayjs'
 import ExerciseEditor from '@/components/Tutoring/ExerciseEditor.vue'
-import { firstFailureText, runPassed, runStatusText } from '@/utils/tutoring'
+import { countText, firstFailureText, runPassed, runStatusText } from '@/utils/tutoring'
 import type { LastRun } from '@/utils/tutoring'
 
 // The local service the learner runs on their own machine. It builds, runs the
@@ -217,9 +210,6 @@ const simulationAllowed = computed<boolean>(() => {
 const lastRun = computed<LastRun | null>(() => status.data?.last || null)
 const passed = computed<boolean>(() => runPassed(lastRun.value))
 const statusLine = computed<string>(() => runStatusText(lastRun.value))
-const lastFailureText = computed<string>(() =>
-	firstFailureText(lastRun.value?.first_failure)
-)
 const runFailureText = computed<string>(() =>
 	firstFailureText(runResult.value?.first_failure)
 )
@@ -229,15 +219,15 @@ const receivedAgo = computed<string>(() => {
 	return received ? dayjs(received).fromNow() : ''
 })
 
-const facts = computed(() => {
+const facts = computed<string[]>(() => {
 	const data = status.data || {}
 	const rows = [
-		{ label: __('Attempts'), value: String(data.attempts ?? 0) },
-		{ label: __('Hints used'), value: String(data.hints_used ?? 0) },
+		countText(data.attempts ?? 0, __('attempt'), __('attempts')),
+		countText(data.hints_used ?? 0, __('hint'), __('hints')),
 	]
 	const target = data.last?.target || filesResource.data?.target
-	if (target) rows.push({ label: __('Target'), value: target })
-	if (data.last?.mode) rows.push({ label: __('Mode'), value: data.last.mode })
+	if (target) rows.push(target)
+	if (data.last?.mode) rows.push(data.last.mode)
 	return rows
 })
 

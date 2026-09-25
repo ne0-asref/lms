@@ -222,3 +222,108 @@ export function needsWorkCount(rows: LessonConceptRow[] | null | undefined): num
 	if (!Array.isArray(rows)) return 0
 	return rows.filter((r) => Boolean(r?.evidence_count) && needsWork(r.p_known)).length
 }
+
+// --- My Progress page -------------------------------------------------------
+
+// At or above this, a concept counts as mastered. Matches the server's
+// MASTERED so the page and the summary it is handed never disagree.
+export const MASTERED_THRESHOLD = 0.8
+
+export interface MasteryRow {
+	p_known: number
+	evidence_count?: number
+}
+
+export interface MasterySummary {
+	mastered: number
+	needs_work: number
+	total: number
+}
+
+/** Mastered, needs work and total over any list of concept rows. */
+export function masterySummary(rows: MasteryRow[] | null | undefined): MasterySummary {
+	const list = Array.isArray(rows) ? rows : []
+	return {
+		mastered: list.filter((r) => clamp(r?.p_known) >= MASTERED_THRESHOLD).length,
+		needs_work: needsWorkCount(list as LessonConceptRow[]),
+		total: list.length,
+	}
+}
+
+/** "3 of 12 concepts mastered, 2 need work" (the tail only when non-zero). */
+export function masterySummaryText(summary: MasterySummary): string {
+	const head = `${summary.mastered} of ${summary.total} concepts mastered`
+	return summary.needs_work ? `${head}, ${summary.needs_work} need work` : head
+}
+
+export interface ProgressCourseOption {
+	label: string
+	value: string
+}
+
+/**
+ * The course picker on My Progress: every course the tutoring covers, then
+ * "All courses" (value '') for the flat table across everything.
+ */
+export function progressCourseOptions(
+	courses: CourseProgressRow[] | null | undefined,
+	allLabel = 'All courses'
+): ProgressCourseOption[] {
+	const list = Array.isArray(courses) ? courses : []
+	const options = list.map((row) => ({
+		label: row.course_title || row.course,
+		value: row.course,
+	}))
+	options.push({ label: allLabel, value: '' })
+	return options
+}
+
+/**
+ * Which course the page opens on. The one asked for in the URL when it is a
+ * course the tutoring covers, else the first course, else all courses.
+ */
+export function pickProgressCourse(
+	courses: CourseProgressRow[] | null | undefined,
+	wanted: unknown
+): string {
+	const list = Array.isArray(courses) ? courses : []
+	if (typeof wanted === 'string' && list.some((row) => row.course === wanted)) {
+		return wanted
+	}
+	return list.length ? list[0].course : ''
+}
+
+export interface FixIt {
+	exercise_id?: string
+	title?: string
+	lesson?: string
+	course?: string
+}
+
+export interface ConceptFixRow extends LessonConceptRow {
+	fix?: FixIt | null
+}
+
+/**
+ * The concepts of one course that need work, in course order, each carrying
+ * the fix the flat progress rows know about for it.
+ */
+export function courseFixList(
+	concepts: LessonConceptRow[] | null | undefined,
+	rows: { concept: string; fix?: FixIt | null }[] | null | undefined
+): ConceptFixRow[] {
+	const list = Array.isArray(concepts) ? concepts : []
+	const fixes = new Map<string, FixIt | null | undefined>()
+	for (const row of Array.isArray(rows) ? rows : []) fixes.set(row.concept, row.fix)
+	return list
+		.filter((c) => Boolean(c?.evidence_count) && needsWork(c.p_known))
+		.map((c) => ({ ...c, fix: fixes.get(c.id) || null }))
+}
+
+// --- One-line strips --------------------------------------------------------
+
+/** "2 attempts", "1 hint": the exercise strip's counts, pluralised. */
+export function countText(count: unknown, singular: string, plural: string): string {
+	const n = typeof count === 'number' && Number.isFinite(count) ? count : 0
+	return `${n} ${n === 1 ? singular : plural}`
+}
